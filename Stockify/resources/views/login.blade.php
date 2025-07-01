@@ -29,7 +29,7 @@
         <div class="text-end">
         <a href="/forgot-password"> Lupa Password</a>
       </div>
-      <div class="d-grid mt-2">
+      <div class="d-grid mt-2 mb-4">
         <button type="submit" class="btn btn-primary">Login</button>  
     </div>
     </form>
