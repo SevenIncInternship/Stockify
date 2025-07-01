@@ -27,7 +27,7 @@
         <input type="password" name="password" class="form-control" placeholder="Password" required>
       </div>
         <div class="text-end">
-        <a href="/forgot-password"> Lupa Password</a>
+        <a href="/lupa"> Lupa Password</a>
       </div>
       <div class="d-grid mt-2 mb-4">
         <button type="submit" class="btn btn-primary">Login</button>  
