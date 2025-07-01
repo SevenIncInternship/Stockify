@@ -13,6 +13,11 @@
 <!-- Reset Password Section -->
 <section class="d-flex justify-content-center align-items-center min-vh-100 bg-lightgray">
   <div class="card shadow p-4" style="width: 400px;">
+     <div class="mb-2">
+        <button type="button" onclick="history.back()" class="btn btn-outline-primary btn-sm"aria-disabled>
+            Back
+        </button>
+    </div>
     <h2 class="text-center mb-4">Reset Password</h2>
     <div class="text-center mb-3">
       <img src="assets/images/login.png" alt="Logo" style="width: 150px;">
