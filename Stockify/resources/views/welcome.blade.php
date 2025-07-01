@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center px-6">
+    <div>
+        <img src="https://tailwindui.com/img/logos/workflow-mark.svg?color=white" alt="Workflow" class="mx-auto h-12 w-auto">
+    </div>
     <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Selamat Datang di Stockify</h1>
     <p class="text-lg md:text-xl mb-6">Kelola stok barangmu dengan mudah dan cepat.</p>
     <div class="space-x-4">

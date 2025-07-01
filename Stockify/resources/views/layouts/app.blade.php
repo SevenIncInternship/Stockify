@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Home') }}</title>
 
-    {{-- Load Tailwind via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Tambahan font atau meta tag bisa di sini --}}
@@ -20,7 +19,7 @@
     @endif
 
     {{-- Konten halaman --}}
-    <main class="py-6">
+    <main class="container mx-auto p-4">
         @yield('content')
     </main>
 
