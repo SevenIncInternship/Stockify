@@ -1,26 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
-Route::get('/Home', function () {
+Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', function () {
-    return view('login');
-});
+// Login routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/lupa', function () {
-    return view('lupa');
-});
+// Forgot password routes
+Route::get('/lupa', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/lupa', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');

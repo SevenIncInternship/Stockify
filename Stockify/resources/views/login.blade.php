@@ -1,41 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+@extends('layouts.app')
 
-<!-- Login Section -->
-<section class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
-  <div class="card shadow p-4" style="width: 400px;">
-    <h2 class="text-center mb-4">Login</h2>
-    <div class="text-center mb-3">
-      <img src="assets/images/login.png" alt="Login Image" style="width: 150px;">
+@section('content')
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800">Login</h2>
+        <form action="{{ route('login') }}" method="POST" class="space-y-4">
+            @csrf
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" name="email" id="email" required
+                       class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="password" id="password" required
+                       class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex items-center justify-between">
+               <a href="{{ route('password.request') }}">Lupa Password?</a>
+            </div>
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                Login
+            </button>
+        </form>
     </div>
-    
-    <form action="/login" method="post">
-      @csrf
-      <div class="mb-3">
-        <input type="text" name="username" class="form-control" placeholder="Username" required>
-      </div>
-      <div class="mb-3">
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
-      </div>
-        <div class="text-end">
-        <a href="/lupa"> Lupa Password</a>
-      </div>
-      <div class="d-grid mt-2 mb-4">
-        <button type="submit" class="btn btn-primary">Login</button>  
-    </div>
-    </form>
-  </div>
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>
+@endsection
