@@ -7,9 +7,11 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+
     {{-- Tambahan font atau meta tag bisa di sini --}}
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased">
+<body class="font-sans antialiased">
+     @include('layouts.navbar')
 
     {{-- Flash message (jika ada) --}}
     @if (session('status'))
@@ -19,7 +21,7 @@
     @endif
 
     {{-- Konten halaman --}}
-    <main class="container mx-auto p-4">
+    <main class="container">
         @yield('content')
     </main>
 
