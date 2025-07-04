@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen h-full w-auto flex flex-col items-center justify-center bg-gradient-to-r from-gray-200 to-white text-black text-center">
+<div class="min-h-screen h-full w-auto flex flex-col items-center justify-center bg-gradient-to-r from-gray-400 to-blue-200 text-black text-center">
     <div>
-        <img src="{{ asset('assets/images/contoh.jpg') }}" alt="Logo" class="mx-auto max-w-md w-full h-auto float-none shadow-md">
+        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="mx-auto max-w-md w-full h-auto float-none shadow-md">
     </div>
     <div class="">
         <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Selamat Datang di Stockify</h1>

@@ -1,4 +1,3 @@
-{{-- resources/views/partials/navbar.blade.php --}}
 <header class="bg-white shadow-md">
     <div class="max-w-screen-xl mx-auto px-4 py-3 flex justify-between items-center">
         <div class="text-2xl font-bold text-gray-800">
