@@ -18,12 +18,23 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BarangMasuk extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'nama_barang',
-        'jumlah',
-        'satuan',
-        'status',
+        'produk_id',
+        'jumlah', 
+        'tanggal',
+        'supplier_id',
+        'status_konfirmasi'
     ];
+    
+    // Relationship dengan tabel products
+    public function produk()
+    {
+        return $this->belongsTo(Product::class, 'produk_id');
+    }
+    
+    // Relationship dengan tabel suppliers
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
 }

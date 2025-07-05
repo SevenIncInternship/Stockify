@@ -6,7 +6,7 @@
 <div class="container mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-xl font-bold text-gray-800">Barang Masuk</h1>
-        <a href="{{ route('admin.barang-masuk.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <a href="{{ route('admin.barang_masuk.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             <i class="fas fa-plus mr-1"></i> Tambah Barang Masuk
         </a>
     </div>
@@ -37,7 +37,7 @@
                         <td class="px-4 py-2">{{ $barang->created_at->format('d-m-Y') }}</td>
                         <td class="px-4 py-2">
                             <a href="{{ route('admin.barang-masuk.edit', $barang->id) }}" class="text-blue-600 hover:underline mr-2">Edit</a>
-                            <form action="{{ route('admin.barang-masuk.destroy', $barang->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus?')">
+                            <form action="{{ route('admin.barang_masuk.destroy', $barang->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:underline">Hapus</button>

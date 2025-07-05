@@ -100,11 +100,55 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
             // Resource routes untuk manajemen data master
-            Route::resource('/products', ProductController::class)->names('product');
-            Route::resource('/barang_masuk', BarangMasukController::class)->names('barang_masuk');
-            Route::resource('/barang_keluar', BarangKeluarController::class)->names('barang_keluar');
-            Route::resource('/categories', CategoryController::class)->names('category');
-            Route::resource('/suppliers', SupplierController::class)->names('supplier');
+            Route::resource('/products', ProductController::class)->names([
+                'index' => 'product.index',
+                'create' => 'product.create',
+                'store' => 'product.store',
+                'show' => 'product.show',
+                'edit' => 'product.edit',
+                'update' => 'product.update',
+                'destroy' => 'product.destroy',
+            ]);
+            
+            Route::resource('/barang_masuk', BarangMasukController::class)->names([
+                'index' => 'barang_masuk.index',
+                'create' => 'barang_masuk.create',
+                'store' => 'barang_masuk.store',
+                'show' => 'barang_masuk.show',
+                'edit' => 'barang_masuk.edit',
+                'update' => 'barang_masuk.update',
+                'destroy' => 'barang_masuk.destroy',
+            ]);
+            
+            Route::resource('/barang_keluar', BarangKeluarController::class)->names([
+                'index' => 'barang_keluar.index',
+                'create' => 'barang_keluar.create',
+                'store' => 'barang_keluar.store',
+                'show' => 'barang_keluar.show',
+                'edit' => 'barang_keluar.edit',
+                'update' => 'barang_keluar.update',
+                'destroy' => 'barang_keluar.destroy',
+            ]);
+            
+            Route::resource('/categories', CategoryController::class)->names([
+                'index' => 'category.index',
+                'create' => 'category.create',
+                'store' => 'category.store',
+                'show' => 'category.show',
+                'edit' => 'category.edit',
+                'update' => 'category.update',
+                'destroy' => 'category.destroy',
+            ]);
+            
+            Route::resource('/suppliers', SupplierController::class)->names([
+                'index' => 'supplier.index',
+                'create' => 'supplier.create',
+                'store' => 'supplier.store',
+                'show' => 'supplier.show',
+                'edit' => 'supplier.edit',
+                'update' => 'supplier.update',
+                'destroy' => 'supplier.destroy',
+            ]);
 
             // Rute Laporan (khusus Admin)
             Route::get('/laporan/barang-masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');

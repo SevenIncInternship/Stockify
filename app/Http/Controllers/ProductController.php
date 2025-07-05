@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return view('admin.product.index', compact('products'));
+        return view('product.index', compact('products'));
     }
 
     /**
@@ -28,7 +28,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all(); // Mengambil semua kategori
-        return view('admin.product.create', compact('categories')); // Mengirim kategori ke view
+        return view('product.create', compact('categories')); // Mengirim kategori ke view
     }
 
     /**
@@ -48,7 +48,7 @@ class ProductController extends Controller
         ]);
 
         Product::create($validated);
-        return redirect()->route('product.index')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     /**
@@ -61,7 +61,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $categories = Category::all(); // Ambil juga kategori untuk form edit
-        return view('admin.product.edit', compact('product', 'categories'));
+        return view('product.edit', compact('product', 'categories'));
     }
 
     /**
@@ -83,7 +83,7 @@ class ProductController extends Controller
         ]);
 
         $product->update($validated);
-        return redirect()->route('product.index')->with('success', 'Produk berhasil diperbarui.');
+        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
@@ -96,6 +96,6 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
-        return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil dihapus.');
     }
 }

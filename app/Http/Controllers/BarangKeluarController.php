@@ -13,7 +13,7 @@ class BarangKeluarController extends Controller
     public function index()
     {
         $items = BarangKeluar::latest()->get();
-        return view('admin.barang_keluar.index', compact('items'));
+        return view('barang_keluar.index', compact('items'));
     }
 
     /**
@@ -39,7 +39,7 @@ class BarangKeluarController extends Controller
 
         BarangKeluar::create($validated);
 
-        return redirect()->route('admin.barang-keluar.index')
+        return redirect()->route('barang_keluar.index')
                          ->with('success', 'Barang keluar berhasil ditambahkan.');
     }
 
@@ -68,7 +68,7 @@ class BarangKeluarController extends Controller
 
         $item->update($validated);
 
-        return redirect()->route('admin.barang-keluar.index')
+        return redirect()->route('barang_keluar.index')
                          ->with('success', 'Barang keluar berhasil diperbarui.');
     }
 
@@ -80,7 +80,7 @@ class BarangKeluarController extends Controller
         $item = BarangKeluar::findOrFail($id);
         $item->delete();
 
-        return redirect()->route('admin.barang-keluar.index')
+        return redirect()->route('barang_keluar.index')
                          ->with('success', 'Barang keluar berhasil dihapus.');
     }
 }

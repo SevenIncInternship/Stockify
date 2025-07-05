@@ -2,7 +2,7 @@
 @section('content')
 <div class="p-6">
     <h1 class="text-xl font-bold mb-4">Tambah Produk</h1>
-    <form method="POST" action="{{ route('product.store') }}" class="space-y-4">
+    <form method="POST" action="{{ route('admin.product.store') }}" class="space-y-4">
         @csrf
         <input type="text" name="nama" placeholder="Nama Produk" class="w-full border p-2" required>
         <input type="text" name="kategori" placeholder="Kategori" class="w-full border p-2">

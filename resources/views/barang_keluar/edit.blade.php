@@ -6,7 +6,7 @@
 <div class="p-6 bg-white rounded-xl shadow-md">
     <h1 class="text-2xl font-bold mb-6 text-gray-800">Edit Barang Keluar</h1>
 
-    <form method="POST" action="{{ route('admin.barang-keluar.update', $item->id) }}" class="space-y-6">
+    <form method="POST" action="{{ route('admin.barang_keluar.update', $item->id) }}" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -82,7 +82,7 @@
         {{-- Tombol --}}
         <div class="flex justify-end gap-3">
             <a
-                href="{{ route('admin.barang-keluar.index') }}"
+                href="{{ route('barang_keluar.index') }}"
                 class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-150 ease-in-out"
             >
                 Batal
