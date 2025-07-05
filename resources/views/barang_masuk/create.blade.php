@@ -6,7 +6,7 @@
 <div class="p-6 max-w-2xl mx-auto">
     <h1 class="text-2xl font-bold mb-6 text-gray-800">Tambah Barang Masuk</h1>
 
-    <form method="POST" action="{{ route('admin.barang-masuk.store') }}" class="bg-white p-6 rounded-lg shadow space-y-4">
+    <form method="POST" action="{{ route('admin.barang_masuk.store') }}" class="bg-white p-6 rounded-lg shadow space-y-4">
         @csrf
 
         {{-- Nama Barang --}}
@@ -38,7 +38,7 @@
 
         {{-- Tombol --}}
         <div class="flex justify-end">
-            <a href="{{ route('admin.barang-masuk.index') }}" class="mr-4 text-gray-600 hover:underline">Batal</a>
+            <a href="{{ route('admin.barang_masuk.index') }}" class="mr-4 text-gray-600 hover:underline">Batal</a>
             <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
                 Simpan
             </button>
