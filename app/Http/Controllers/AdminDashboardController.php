@@ -33,6 +33,7 @@ class AdminDashboardController extends Controller
         // Data Harian untuk 7 hari terakhir
         $startDate = Carbon::now()->subDays(6)->startOfDay();
 
+<<<<<<< Updated upstream
        $barangMasukHarian = BarangMasuk::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
     ->where('created_at', '>=', $startDate)
     ->groupByRaw('DATE(created_at)')
@@ -47,6 +48,22 @@ $barangKeluarHarian = BarangKeluar::selectRaw("DATE(created_at) as tanggal, SUM(
     ->get()
     ->keyBy('tanggal');
 
+=======
+        // Gunakan DB::raw untuk grouping
+        $barangMasukHarian = BarangMasuk::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
+            ->where('created_at', '>=', '2025-06-29 00:00:00')
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+            
+        
+            
+        $barangKeluarHarian = BarangKeluar::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
+            ->where('created_at', '>=', '2025-06-29 00:00:00')
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+>>>>>>> Stashed changes
 
         $labelsHarian     = [];
         $dataMasukHarian  = [];
