@@ -29,7 +29,7 @@ class Product extends Model
      */
     protected $fillable = [
         'nama',
-        'kategori', // Jika ini adalah kategori_id, pastikan nama kolom di DB sesuai
+        'kategori', 
         'stok',
         'satuan',
     ];

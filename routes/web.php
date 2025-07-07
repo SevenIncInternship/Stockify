@@ -118,6 +118,7 @@ Route::middleware(['auth'])->group(function () {
                 'edit' => 'barang_masuk.edit',
                 'update' => 'barang_masuk.update',
                 'destroy' => 'barang_masuk.destroy',
+                'konfirmasi'=>'barang_masuk.konfirmasi',
             ]);
             
             Route::resource('/barang_keluar', BarangKeluarController::class)->names([
