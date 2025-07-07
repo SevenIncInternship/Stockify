@@ -1,8 +1,10 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
     <div class="p-6">
         <h1 class="text-xl font-bold mb-4">Edit Kategori</h1>
 
-        <form method="POST" action="{{ route('category.update', $category) }}">
+        <form method="POST" action="{{ route('admin.category.update', $category) }}">
             @csrf
             @method('PUT')
 
@@ -21,7 +23,7 @@
             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                 Perbarui
             </button>
-            <a href="{{ route('category.index') }}" class="ml-3 text-gray-600 hover:underline">Batal</a>
+            <a href="{{ route('admin.category.index') }}" class="ml-3 text-gray-600 hover:underline">Batal</a>
         </form>
     </div>
-</x-app-layout>
+@endsection
