@@ -74,7 +74,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.supplier.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-indigo-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10">
+                <a href="{{ route('admin.suppliers.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-indigo-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10">
                     <div class="w-8 h-8 bg-slate-700 group-hover:bg-purple-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
                         <i class="fas fa-truck text-sm"></i>
                     </div>

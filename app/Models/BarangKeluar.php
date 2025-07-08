@@ -21,9 +21,17 @@ class BarangKeluar extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama_barang',
+        'produk',
         'jumlah',
         'satuan',
         'status',
+        'status_konfirmasi',
     ];
+
+    public function product()
+{
+    return $this->belongsTo(Product::class);
+}
+
+
 }
