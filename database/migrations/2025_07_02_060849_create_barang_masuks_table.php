@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id();
 
             // Foreign key harus tidak nullable kalau memang required
-            $table->foreignId('product_id')->constrained('products')->onDelete('set null');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
 
             $table->integer('jumlah');

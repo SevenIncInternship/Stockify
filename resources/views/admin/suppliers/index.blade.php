@@ -38,9 +38,9 @@
                         <td class="px-4 py-2">{{ $supplier->alamat }}</td>
                         <td class="px-4 py-2">{{ $supplier->telepon }}</td>
                         <td class="px-4 py-2 text-center whitespace-nowrap">
-                            <a href="{{ route('admin.supplier.edit', $supplier->id) }}"
+                            <a href="{{ route('admin.suppliers.edit', $supplier->id) }}"
                                class="text-blue-600 hover:underline mr-2">Edit</a>
-                            <form action="{{ route('admin.supplier.destroy', $supplier->id) }}"
+                            <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}"
                                   method="POST" class="inline"
                                   onsubmit="return confirm('Yakin ingin menghapus supplier ini?');">
                                 @csrf

@@ -29,7 +29,7 @@
                         <td class="px-4 py-2">
                             {{ $product->category?->nama ?? '-' }}
                         </td>
-                        <td class="px-4 py-2">{{ $product->stok }}</td>
+                        <td class="px-4 py-2">{{ $product->stock }}</td>
                         <td class="px-4 py-2">{{ $product->satuan }}</td>
                         <td class="px-4 py-2 text-center whitespace-nowrap">
                             <a href="{{ route('admin.product.edit', $product->id) }}" class="text-blue-600 hover:underline">Edit</a>
