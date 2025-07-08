@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('kategori')->nullable();
-            $table->integer('stok')->default(0);
-            $table->string('satuan');
+            $table->string('nama')->nullable();;
+            $table->foreignId('kategori_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
+            $table->integer('stock')->default(0);
+            $table->string('satuan')->nullable();
             $table->timestamps();
         });
 

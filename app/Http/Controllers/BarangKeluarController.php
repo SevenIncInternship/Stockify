@@ -3,84 +3,77 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangKeluar;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class BarangKeluarController extends Controller
 {
-    /**
-     * Tampilkan semua data barang keluar.
-     */
     public function index()
     {
-        $items = BarangKeluar::latest()->get();
-        return view('barang_keluar.index', compact('items'));
+        // Pakai paginate agar bisa pakai hasPages() dan links() di view
+        $barangKeluar = BarangKeluar::with('product')->latest()->paginate(10);
+        return view('barang_keluar.index', compact('barangKeluar'));
     }
 
-    /**
-     * Tampilkan form untuk tambah barang keluar.
-     */
     public function create()
     {
-        return view('admin.barang_keluar.create');
+        $products = Product::all();
+        return view('barang_keluar.create', compact('products'));
     }
 
-    /**
-     * Simpan data baru barang keluar.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'jumlah'      => 'required|integer|min:1',
-            'satuan'      => 'required|string|max:50',
+            'product_id' => 'required|exists:products,id',
+            'jumlah' => 'required|integer|min:1',
+            'tanggal' => 'required|date',
         ]);
 
-        $validated['status'] = 'pending';
+        $validated['status_konfirmasi'] = 'pending';
 
         BarangKeluar::create($validated);
 
-        return redirect()->route('barang_keluar.index')
-                         ->with('success', 'Barang keluar berhasil ditambahkan.');
+        return redirect()->route('barang_keluar.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
     }
 
-    /**
-     * Tampilkan form edit barang keluar.
-     */
-    public function edit($id)
+    public function edit(BarangKeluar $barangKeluar)
     {
-        $item = BarangKeluar::findOrFail($id);
-        return view('admin.barang_keluar.edit', compact('item'));
+        if ($barangKeluar->status_konfirmasi !== 'pending') {
+            return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diedit.']);
+        }
+
+        $products = Product::all();
+        return view('barang_keluar.edit', compact('barangKeluar', 'products'));
     }
 
-    /**
-     * Proses update data barang keluar.
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, BarangKeluar $barangKeluar)
     {
-        $item = BarangKeluar::findOrFail($id);
+        if ($barangKeluar->status_konfirmasi !== 'pending') {
+            return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diperbarui.']);
+        }
 
         $validated = $request->validate([
-            'nama_barang' => 'required|string|max:255',
-            'jumlah'      => 'required|integer|min:1',
-            'satuan'      => 'required|string|max:50',
-            'status'      => 'required|in:pending,selesai',
+            'product_id' => 'required|exists:products,id',
+            'jumlah'     => 'required|integer|min:1',
+            'tanggal'    => 'required|date',
         ]);
 
-        $item->update($validated);
+        $barangKeluar->update($validated);
 
-        return redirect()->route('barang_keluar.index')
-                         ->with('success', 'Barang keluar berhasil diperbarui.');
+        return redirect()->route('barang-keluar.index')->with('success', 'Transaksi berhasil diperbarui.');
     }
 
-    /**
-     * Hapus data barang keluar.
-     */
-    public function destroy($id)
+    public function destroy(BarangKeluar $barangKeluar)
     {
-        $item = BarangKeluar::findOrFail($id);
-        $item->delete();
+        if ($barangKeluar->status_konfirmasi === 'diterima') {
+            // Jika status diterima, update stok produk
+            $product = $barangKeluar->product;
+            $product->stock += $barangKeluar->jumlah;
+            $product->save();
+        }
 
-        return redirect()->route('barang_keluar.index')
-                         ->with('success', 'Barang keluar berhasil dihapus.');
+        $barangKeluar->delete();
+
+        return redirect()->route('barang-keluar.index')->with('success', 'Data barang keluar berhasil dihapus.');
     }
 }

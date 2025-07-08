@@ -7,71 +7,44 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    /**
-     * Tampilkan daftar semua supplier.
-     */
     public function index()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::latest()->get();
         return view('admin.suppliers.index', compact('suppliers'));
     }
 
-    /**
-     * Tampilkan form tambah supplier.
-     */
     public function create()
     {
         return view('admin.suppliers.create');
     }
 
-    /**
-     * Simpan data supplier baru.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'alamat' => 'nullable|string|max:255',
-            'telepon' => 'nullable|string|max:20',
+            'nama'    => 'required|string|max:255',
+            'phone'   => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:255',
         ]);
 
-        Supplier::create($request->only(['nama', 'alamat', 'telepon']));
-
-        return redirect()->route('admin.supplier.index')->with('success', 'Supplier berhasil ditambahkan.');
+        Supplier::create($request->all());
+        return redirect()->route('admin.suppliers.index')->with('success', 'Supplier berhasil ditambahkan');
     }
 
-    /**
-     * Tampilkan form edit supplier.
-     */
-    public function edit($id)
-    {
-        $supplier = Supplier::findOrFail($id);
-        return view('admin.suppliers.edit', compact('supplier'));
-    }
-
-    /**
-     * Update data supplier.
-     */
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, Supplier $suppliers)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'alamat' => 'nullable|string|max:255',
-            'telepon' => 'nullable|string|max:20',
+            'nama'    => 'required|string|max:255',
+            'phone'   => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:255',
         ]);
 
-        $supplier->update($request->only(['nama', 'alamat', 'telepon']));
-
-        return redirect()->route('admin.supplier.index')->with('success', 'Supplier berhasil diperbarui.');
+        $suppliers->update($request->all());
+        return redirect()->route('admin.suppliers.index')->with('success', 'Supplier berhasil diperbarui');
     }
 
-    /**
-     * Hapus data supplier.
-     */
-    public function destroy(Supplier $supplier)
+    public function destroy(Supplier $suppliers)
     {
-        $supplier->delete();
-
-        return redirect()->route('admin.supplier.index')->with('success', 'Supplier berhasil dihapus.');
+        $suppliers->delete();
+        return back()->with('success', 'Supplier berhasil dihapus');
     }
 }

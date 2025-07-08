@@ -5,19 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * App\Models\Product
- *
- * @property int $id
- * @property string $nama
- * @property string|null $kategori // Ini mungkin perlu diubah menjadi $kategori_id jika menggunakan FK
- * @property int $stok
- * @property string $satuan
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- *
- * @property-read \App\Models\Category|null $category Relasi ke model Category
- */
 class Product extends Model
 {
     use HasFactory;
@@ -28,23 +15,26 @@ class Product extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama',
-        'kategori', 
-        'stok',
+        'name',
+        'kategori_id', 
+        'supplier_id', 
+        'stock',
         'satuan',
     ];
 
     /**
-     * Get the category that owns the product.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Relasi ke kategori (Category)
      */
-    public function category() // Nama metode relasi sebaiknya singular: category()
+    public function category()
     {
-        // Asumsi: kolom foreign key di tabel 'products' adalah 'kategori_id'
-        // dan merujuk ke 'id' di tabel 'categories'.
-        // Jika kolom di tabel 'products' Anda benar-benar bernama 'kategori'
-        // dan menyimpan ID kategori, maka gunakan 'kategori' sebagai FK.
         return $this->belongsTo(Category::class, 'kategori_id');
+    }
+
+    /**
+     * Relasi ke supplier (Supplier)
+     */
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 }

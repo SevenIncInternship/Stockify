@@ -3,99 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Category; // Tambahkan ini untuk mengimpor model Category
+use App\Models\Category;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Menampilkan daftar semua produk.
-     *
-     * @return \Illuminate\View\View
-     */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with('category', 'supplier')->latest()->get();
         return view('product.index', compact('products'));
     }
 
-    /**
-     * Menampilkan form untuk membuat produk baru.
-     * Juga mengambil semua kategori untuk dropdown.
-     *
-     * @return \Illuminate\View\View
-     */
     public function create()
     {
-        $categories = Category::all(); // Mengambil semua kategori
-        return view('product.create', compact('categories')); // Mengirim kategori ke view
+        $categories = Category::all();
+        $suppliers  = Supplier::all();
+        return view('product.create', compact('categories', 'suppliers'));
     }
 
-    /**
-     * Menyimpan produk baru ke database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:255', // Jika 'kategori' adalah nama kategori (string)
-            // Atau 'category_id' => 'required|exists:categories,id', jika menggunakan foreign key
-            'stok' => 'required|integer|min:0',
-            'satuan' => 'required|string|max:50',
+        $request->validate([
+            'nama'        => 'required|string|max:255',
+            'kategori_id' => 'required|exists:categories,id',
+            'supplier_id' => 'required|exists:suppliers,id',
         ]);
 
-        Product::create($validated);
-        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil ditambahkan.');
+        $produk = Product::create([
+    'nama' => $request->produk_baru, 
+    'kategori_id' => 1,
+    'supplier_id' => null,
+    'stock' => 0,
+    'satuan' => $request->satuan,
+]);
+
+
+        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil ditambahkan');
     }
 
-    /**
-     * Menampilkan form untuk mengedit produk yang sudah ada.
-     *
-     * @param  int  $id ID produk
-     * @return \Illuminate\View\View
-     */
-    public function edit($id)
+    public function update(Request $request, Product $product)
     {
-        $product = Product::findOrFail($id);
-        $categories = Category::all(); // Ambil juga kategori untuk form edit
-        return view('product.edit', compact('product', 'categories'));
-    }
-
-    /**
-     * Memperbarui produk yang sudah ada di database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id ID produk
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:255', // Jika 'kategori' adalah nama kategori (string)
-            // Atau 'category_id' => 'required|exists:categories,id', jika menggunakan foreign key
-            'stok' => 'required|integer|min:0',
-            'satuan' => 'required|string|max:50',
+        $request->validate([
+            'nama'        => 'required|string|max:255',
+            'kategori_id' => 'required|exists:categories,id',
+            'supplier_id' => 'required|exists:suppliers,id',
         ]);
 
-        $product->update($validated);
-        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil diperbarui.');
+        $product->update($request->only('name', 'kategori_id', 'supplier_id'));
+        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil diperbarui');
     }
 
-    /**
-     * Menghapus produk dari database.
-     *
-     * @param  int  $id ID produk
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        $product = Product::findOrFail($id);
         $product->delete();
-        return redirect()->route('admin.product.index')->with('success', 'Produk berhasil dihapus.');
+        return back()->with('success', 'Produk berhasil dihapus');
     }
 }

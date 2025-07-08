@@ -28,7 +28,7 @@ class AdminDashboardController extends Controller
 
         // Grafik Stok Produk
         $labelsProduk   = Product::pluck('nama')->toArray();
-        $stokDataProduk = Product::pluck('stok')->toArray();
+        $stokDataProduk = Product::pluck('stock')->toArray();
 
         // Data Harian untuk 7 hari terakhir
         $startDate = Carbon::now()->subDays(6)->startOfDay();

@@ -6,7 +6,7 @@
 <div class="p-6 bg-white rounded-xl shadow-md">
     <h1 class="text-2xl font-bold mb-6 text-gray-800">Tambah Supplier</h1>
 
-    <form method="POST" action="{{ route('admin.supplier.store') }}" class="space-y-6">
+    <form method="POST" action="{{ route('admin.suppliers.store') }}" class="space-y-6">
         @csrf
 
         <div>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="flex justify-end">
-            <a href="{{ route('admin.supplier.index') }}"
+            <a href="{{ route('admin.suppliers.index') }}"
                class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 mr-2">Batal</a>
             <button type="submit"
                     class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">

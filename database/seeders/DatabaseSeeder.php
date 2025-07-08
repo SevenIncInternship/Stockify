@@ -8,15 +8,14 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
+use App\Models\Category;
+use App\Models\Supplier;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed database utama untuk aplikasi Stockify.
-     */
     public function run(): void
     {
-        // Jalankan seeder lain terlebih dahulu
         $this->call([
             CategorySeeder::class,
             SupplierSeeder::class,
@@ -25,7 +24,7 @@ class DatabaseSeeder extends Seeder
             BarangKeluarSeeder::class,
         ]);
 
-        // --- Akun Demo (Multi-role) ---
+        // --- Akun Demo ---
         $users = [
             [
                 'name'     => 'Admin Demo',
@@ -58,13 +57,17 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // --- Produk Dummy (jika belum dibuat di ProductSeeder) ---
+        // --- Tambahan Produk Dummy ---
+        $categories = Category::all();
+        $suppliers = Supplier::all();
+
         for ($i = 1; $i <= 10; $i++) {
             Product::create([
-                'nama'     => 'Produk ' . $i,
-                'kategori' => 'Kategori ' . rand(1, 3), // Gantilah jika relasi kategori_id digunakan
-                'stok'     => rand(50, 200),
-                'satuan'   => 'pcs',
+                'nama'        => 'Produk ' . $i,
+                'kategori_id' => $categories->random()->id,
+                'supplier_id' => $suppliers->random()->id,
+                'stock'       => rand(50, 200),
+                'satuan'      => 'pcs',
             ]);
         }
 
@@ -72,22 +75,21 @@ class DatabaseSeeder extends Seeder
         $produkList = Product::all();
         foreach ($produkList as $produk) {
             BarangMasuk::create([
-                'product_id'  => $produk->id,
-                'nama_barang' => $produk->nama,
-                'jumlah'      => rand(10, 30),
-                'satuan'      => $produk->satuan,
-                'status'      => 'pending',
+                'produk_id'       => $produk->id,
+                'jumlah'          => rand(10, 30),
+                'tanggal'         => Carbon::now()->subDays(rand(1, 15)),
+                'supplier_id'     => $produk->supplier_id,
+                'status_konfirmasi' => true,
             ]);
         }
 
         // --- Barang Keluar Dummy ---
         foreach ($produkList as $produk) {
             BarangKeluar::create([
-                'product_id'  => $produk->id,
-                'nama_barang' => $produk->nama,
-                'jumlah'      => rand(5, 20),
-                'satuan'      => $produk->satuan,
-                'status'      => 'pending',
+                'produk_id'       => $produk->id,
+                'jumlah'          => rand(5, 20),
+                'tanggal'         => Carbon::now()->subDays(rand(1, 10)),
+                'status_konfirmasi' => true,
             ]);
         }
     }

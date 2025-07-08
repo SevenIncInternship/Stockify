@@ -105,7 +105,7 @@ Route::middleware(['auth'])->group(function () {
                 'create' => 'product.create',
                 'store' => 'product.store',
                 'show' => 'product.show',
-                'edit' => 'product.edit',
+                'edit' => 'product.edit', 
                 'update' => 'product.update',
                 'destroy' => 'product.destroy',
             ]);
@@ -142,13 +142,13 @@ Route::middleware(['auth'])->group(function () {
             ]);
             
             Route::resource('/suppliers', SupplierController::class)->names([
-                'index' => 'supplier.index',
-                'create' => 'supplier.create',
-                'store' => 'supplier.store',
-                'show' => 'supplier.show',
-                'edit' => 'supplier.edit',
-                'update' => 'supplier.update',
-                'destroy' => 'supplier.destroy',
+                'index' => 'suppliers.index',
+                'create' => 'suppliers.create',
+                'store' => 'suppliers.store',
+                'show' => 'suppliers.show',
+                'edit' => 'suppliers.edit',
+                'update' => 'suppliers.update',
+                'destroy' => 'suppliers.destroy',
             ]);
 
             // Rute Laporan (khusus Admin)

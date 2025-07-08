@@ -8,19 +8,20 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('barang_masuks', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_barang');
+
+            // Foreign key harus tidak nullable kalau memang required
+            $table->foreignId('product_id')->constrained('products')->onDelete('set null');
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
+
             $table->integer('jumlah');
             $table->string('satuan');
-            $table->date('tanggal')->default(now());
+            $table->date('tanggal');
+            $table->string('status_konfirmasi')->default('pending');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('barang_masuks');
     }
 };

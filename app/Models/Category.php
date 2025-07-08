@@ -26,7 +26,7 @@ class Category extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['nama', 'deskripsi'];
+    protected $fillable = ['nama'];
 
     /**
      * Get the products for the category.

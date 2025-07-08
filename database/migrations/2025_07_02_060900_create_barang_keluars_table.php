@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('barang_keluars', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_barang');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('jumlah');
-            $table->string('satuan');
-            $table->string('status')->default('pending');
+            $table->date('tanggal');
+            $table->string('status_konfirmasi')->default('pending');
             $table->timestamps();
         });
 
