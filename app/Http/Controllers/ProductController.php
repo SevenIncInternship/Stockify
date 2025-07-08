@@ -31,12 +31,13 @@ class ProductController extends Controller
         ]);
 
         $produk = Product::create([
-    'nama' => $request->produk_baru, 
-    'kategori_id' => 1,
-    'supplier_id' => null,
-    'stock' => 0,
-    'satuan' => $request->satuan,
+    'nama'        => $request->nama, // ← ini yang benar
+    'kategori_id' => $request->kategori_id,
+    'supplier_id' => $request->supplier_id,
+    'stock'       => 0,
+    'satuan'      => $request->satuan,
 ]);
+
 
 
         return redirect()->route('admin.product.index')->with('success', 'Produk berhasil ditambahkan');
@@ -50,7 +51,7 @@ class ProductController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
         ]);
 
-        $product->update($request->only('name', 'kategori_id', 'supplier_id'));
+        $product->update($request->only('nama', 'kategori_id', 'supplier_id'));
         return redirect()->route('admin.product.index')->with('success', 'Produk berhasil diperbarui');
     }
 
