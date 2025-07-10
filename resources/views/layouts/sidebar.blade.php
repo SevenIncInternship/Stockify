@@ -1,8 +1,9 @@
 <div class="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl min-h-screen relative overflow-hidden">
-    <!-- Background Pattern -->
+
+    {{-- Background SVG pattern --}}
     <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-    
-    <!-- Header -->
+
+    {{-- Header --}}
     <div class="relative z-10 p-6 border-b border-slate-700/50">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -15,82 +16,48 @@
         </div>
     </div>
 
-    <!-- Navigation -->
+    {{-- Menu Navigasi --}}
     <nav class="relative z-10 p-4 space-y-2">
+        @php
+            $navItems = [
+                ['route' => 'admin.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
+                ['route' => 'admin.product.index', 'icon' => 'fa-box', 'label' => 'Produk', 'color' => 'green'],
+                ['route' => 'admin.barang_masuk.index', 'icon' => 'fa-arrow-down', 'label' => 'Barang Masuk', 'color' => 'cyan'],
+                ['route' => 'admin.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
+                ['route' => 'admin.category.index', 'icon' => 'fa-tags', 'label' => 'Kategori', 'color' => 'yellow'],
+                ['route' => 'admin.suppliers.index', 'icon' => 'fa-truck', 'label' => 'Supplier', 'color' => 'purple'],
+            ];
+        @endphp
+
         <ul class="space-y-1">
-            <li>
-                <a href="{{ route('admin.dashboard') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-purple-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/10">
-                    <div class="w-8 h-8 bg-slate-700 group-hover:bg-blue-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                        <i class="fas fa-tachometer-alt text-sm"></i>
-                    </div>
-                    <span class="font-medium">Dashboard</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.product.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/10">
-                    <div class="w-8 h-8 bg-slate-700 group-hover:bg-green-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                        <i class="fas fa-box text-sm"></i>
-                    </div>
-                    <span class="font-medium">Produk</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.barang_masuk.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10">
-                    <div class="w-8 h-8 bg-slate-700 group-hover:bg-cyan-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                        <i class="fas fa-arrow-down text-sm"></i>
-                    </div>
-                    <span class="font-medium">Barang Masuk</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.barang_keluar.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-red-500/20 hover:to-pink-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/10">
-                    <div class="w-8 h-8 bg-slate-700 group-hover:bg-red-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                        <i class="fas fa-arrow-up text-sm"></i>
-                    </div>
-                    <span class="font-medium">Barang Keluar</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.category.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-yellow-500/20 hover:to-orange-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-yellow-500/30 hover:shadow-lg hover:shadow-yellow-500/10">
-                    <div class="w-8 h-8 bg-slate-700 group-hover:bg-yellow-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                        <i class="fas fa-tags text-sm"></i>
-                    </div>
-                    <span class="font-medium">Kategori</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.suppliers.index') }}" class="group flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-indigo-500/20 rounded-xl transition-all duration-200 border border-transparent hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10">
-                    <div class="w-8 h-8 bg-slate-700 group-hover:bg-purple-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                        <i class="fas fa-truck text-sm"></i>
-                    </div>
-                    <span class="font-medium">Supplier</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </div>
-                </a>
-            </li>
+            @foreach ($navItems as $item)
+                <li>
+                    <a href="{{ route($item['route']) }}"
+                       class="group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 border border-transparent
+                           {{ Route::is($item['route'].'*') ? 'bg-'.$item['color'].'-500/20 text-white border-'.$item['color'].'-500/30 shadow-md' : 'text-slate-300 hover:text-white hover:bg-'.$item['color'].'-500/10 hover:border-'.$item['color'].'-500/30 hover:shadow-lg' }}">
+                        <div class="w-8 h-8 bg-slate-700 group-hover:bg-{{ $item['color'] }}-500 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110">
+                            <i class="fas {{ $item['icon'] }} text-sm"></i>
+                        </div>
+                        <span class="font-medium">{{ $item['label'] }}</span>
+                        @if (Route::is($item['route'].'*'))
+                            <div class="ml-auto">
+                                <i class="fas fa-chevron-right text-xs text-white"></i>
+                            </div>
+                        @else
+                            <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                            </div>
+                        @endif
+                    </a>
+                </li>
+            @endforeach
         </ul>
     </nav>
 
-    <!-- Divider -->
+    {{-- Divider --}}
     <div class="relative z-10 mx-4 my-4 border-t border-slate-700/50"></div>
 
-    <!-- User Profile Section -->
+    {{-- User Info --}}
     <div class="relative z-10 p-4">
         <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
             <div class="flex items-center space-x-3 mb-3">
@@ -98,8 +65,8 @@
                     <i class="fas fa-user text-white text-sm"></i>
                 </div>
                 <div>
-                    <p class="text-white font-medium text-sm">Administrator</p>
-                    <p class="text-slate-400 text-xs">admin@example.com</p>
+                    <p class="text-white font-medium text-sm">{{ Auth::user()->name ?? 'Administrator' }}</p>
+                    <p class="text-slate-400 text-xs">{{ Auth::user()->email ?? 'admin@example.com' }}</p>
                 </div>
             </div>
             <a href="{{ route('logout') }}"
@@ -113,9 +80,10 @@
         </div>
     </div>
 
-    <!-- Bottom Decoration -->
+    {{-- Background bottom gradient --}}
     <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none"></div>
 
+    {{-- Hidden logout form --}}
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
         @csrf
     </form>
