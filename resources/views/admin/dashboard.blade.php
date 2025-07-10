@@ -134,49 +134,49 @@
     <!-- Charts Section -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <!-- Grafik Stok Produk -->
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-800">Grafik Stok Produk</h2>
-                    <p class="text-sm text-gray-600">Monitoring stok inventory real-time</p>
-                </div>
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-full p-3">
-                    <i class="fas fa-chart-bar text-white text-lg"></i>
-                </div>
-            </div>
-            <div class="relative">
-                <canvas id="stokChart" height="300"></canvas>
-            </div>
+<div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 max-h-[400px] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Grafik Stok Produk</h2>
+            <p class="text-sm text-gray-600">Monitoring stok inventory real-time</p>
         </div>
-
-        <!-- Grafik Barang Masuk & Keluar -->
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-800">Aktivitas Harian</h2>
-                    <p class="text-sm text-gray-600">Barang masuk & keluar 7 hari terakhir</p>
-                </div>
-                <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-full p-3">
-                    <i class="fas fa-chart-line text-white text-lg"></i>
-                </div>
-            </div>
-            
-            <!-- Tabs untuk Grafik -->
-            <div class="flex space-x-1 mb-4 bg-gray-100 rounded-lg p-1">
-                <button id="tabMasuk" class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors bg-white text-gray-800 shadow-sm">
-                    <i class="fas fa-arrow-down mr-2"></i>Barang Masuk
-                </button>
-                <button id="tabKeluar" class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors text-gray-600 hover:text-gray-800">
-                    <i class="fas fa-arrow-up mr-2"></i>Barang Keluar
-                </button>
-            </div>
-            
-            <div class="relative">
-                <canvas id="grafikMasuk" height="250" class="chart-canvas"></canvas>
-                <canvas id="grafikKeluar" height="250" class="chart-canvas hidden"></canvas>
-            </div>
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-full p-3">
+            <i class="fas fa-chart-bar text-white text-lg"></i>
         </div>
     </div>
+    <div class="relative">
+        <canvas id="stokChart" height="200"></canvas> {{-- dikurangi tingginya --}}
+    </div>
+</div>
+
+<!-- Grafik Barang Masuk & Keluar -->
+<div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 max-h-[400px] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Aktivitas Harian</h2>
+            <p class="text-sm text-gray-600">Barang masuk & keluar 7 hari terakhir</p>
+        </div>
+        <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-full p-3">
+            <i class="fas fa-chart-line text-white text-lg"></i>
+        </div>
+    </div>
+
+    <!-- Tabs untuk Grafik -->
+    <div class="flex space-x-1 mb-4 bg-gray-100 rounded-lg p-1">
+        <button id="tabMasuk" class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors bg-white text-gray-800 shadow-sm">
+            <i class="fas fa-arrow-down mr-2"></i>Barang Masuk
+        </button>
+        <button id="tabKeluar" class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors text-gray-600 hover:text-gray-800">
+            <i class="fas fa-arrow-up mr-2"></i>Barang Keluar
+        </button>
+    </div>
+
+    <div class="relative">
+        <canvas id="grafikMasuk" height="200" class="chart-canvas"></canvas>
+        <canvas id="grafikKeluar" height="200" class="chart-canvas hidden"></canvas>
+    </div>
+</div>
+
 
     <!-- Quick Actions -->
     <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">

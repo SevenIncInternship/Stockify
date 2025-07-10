@@ -20,7 +20,7 @@
             @include('layouts.sidebar')
 
             <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col ml-64"> {{-- ml-64 untuk mengimbangi lebar sidebar --}}
+            <div class="flex-1 flex flex-col "> 
                 <!-- Navbar / Header untuk konten utama -->
                 <nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
                     <div class="text-xl font-bold text-green-700">@yield('title', 'Dashboard')</div> {{-- Menampilkan judul halaman --}}
@@ -38,8 +38,8 @@
                 </nav>
 
                 <!-- Konten Utama Halaman -->
-                <main class="flex-1 container mx-auto px-4 py-6">
-                    @yield('content')
+                <main class="flex-1 w-full px-6 py-6">
+                @yield('content')
                 </main>
 
                 <!-- Footer -->
