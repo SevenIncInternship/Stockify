@@ -21,17 +21,27 @@ class BarangKeluar extends Model
     use HasFactory;
 
     protected $fillable = [
-        'produk',
+        'product_id',
+        'supplier_id',
         'jumlah',
         'satuan',
-        'status',
+        'tanggal',
         'status_konfirmasi',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+
     public function product()
-{
-    return $this->belongsTo(Product::class);
-}
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 
 
 }

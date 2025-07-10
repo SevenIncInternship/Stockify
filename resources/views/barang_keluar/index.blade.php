@@ -3,24 +3,24 @@
 @section('title', 'Data Barang Keluar')
 
 @section('content')
-<div class="container mx-auto p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Barang Keluar</h1>
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-xl font-bold text-gray-800">Barang Keluar</h1>
         <a href="{{ route('admin.barang_keluar.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             <i class="fas fa-plus mr-1"></i> Tambah Barang Keluar
         </a>
     </div>
 
     @if (session('success'))
-        <div class="mb-4 px-4 py-3 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
-        <table class="min-w-full table-auto">
-            <thead class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                <tr>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg shadow">
+            <thead>
+                <tr class="bg-gray-100 text-gray-700 text-left">
                     <th class="px-4 py-2">#</th>
                     <th class="px-4 py-2">Nama Barang</th>
                     <th class="px-4 py-2">Jumlah</th>
@@ -30,31 +30,33 @@
                     <th class="px-4 py-2">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-sm text-gray-600">
+            <tbody>
                 @forelse ($barangKeluar as $index => $barang)
-                    <tr class="border-b">
+                    <tr class="border-b hover:bg-gray-50">
                         <td class="px-4 py-2">{{ $barangKeluar->firstItem() + $index }}</td>
-                        <td class="px-4 py-2">{{ $barang->product->name ?? '-' }}</td>
+                        <td class="px-4 py-2 font-medium text-gray-800">
+                            {{ $barang->product?->nama ?? '-' }}
+                        </td>
                         <td class="px-4 py-2">{{ $barang->jumlah }}</td>
                         <td class="px-4 py-2">{{ $barang->satuan }}</td>
                         <td class="px-4 py-2">{{ \Carbon\Carbon::parse($barang->tanggal)->format('d-m-Y') }}</td>
                         <td class="px-4 py-2">
-                            <span class="px-2 py-1 rounded text-xs font-medium
-                                {{ match($barang->status_konfirmasi) {
-                                    'diterima' => 'bg-green-100 text-green-700',
-                                    'ditolak' => 'bg-red-100 text-red-700',
-                                    default => 'bg-yellow-100 text-yellow-800'
-                                } }}">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded 
+                                {{ 
+                                    $barang->status_konfirmasi === 'diterima' ? 'bg-green-200 text-green-700' :
+                                    ($barang->status_konfirmasi === 'ditolak' ? 'bg-red-200 text-red-700' :
+                                    'bg-yellow-200 text-yellow-800')
+                                }}">
                                 {{ ucfirst($barang->status_konfirmasi) }}
                             </span>
                         </td>
                         <td class="px-4 py-2">
                             @if($barang->status_konfirmasi === 'pending')
-                                <div class="flex items-center gap-2">
+                                <div class="flex flex-wrap gap-2">
                                     <a href="{{ route('admin.barang_keluar.edit', $barang->id) }}" class="text-blue-600 hover:underline">
                                         <i class="fas fa-edit mr-1"></i>Edit
                                     </a>
-                                    <form action="{{ route('admin.barang_keluar.destroy', $barang->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')" class="inline">
+                                    <form action="{{ route('admin.barang_keluar.destroy', $barang->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:underline">
@@ -76,8 +78,8 @@
         </table>
     </div>
 
-    @if ($barangKeluar instanceof \Illuminate\Pagination\LengthAwarePaginator && $barangKeluar->hasPages())
-        <div class="mt-6">
+    @if ($barangKeluar->hasPages())
+        <div class="mt-4">
             {{ $barangKeluar->links() }}
         </div>
     @endif
