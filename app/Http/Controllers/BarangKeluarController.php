@@ -10,7 +10,6 @@ class BarangKeluarController extends Controller
 {
     public function index()
     {
-        // Pakai paginate agar bisa pakai hasPages() dan links() di view
         $barangKeluar = BarangKeluar::with('product')->latest()->paginate(10);
         return view('barang_keluar.index', compact('barangKeluar'));
     }
@@ -25,15 +24,28 @@ class BarangKeluarController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'jumlah' => 'required|integer|min:1',
-            'tanggal' => 'required|date',
+            'jumlah'     => 'required|integer|min:1',
+            'satuan'     => 'required|string',
+            'tanggal'    => 'required|date',
+            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
         ]);
 
-        $validated['status_konfirmasi'] = 'pending';
+        $product = Product::findOrFail($validated['product_id']);
+
+        // Jika status langsung diterima, cek stok cukup atau tidak
+        if ($validated['status_konfirmasi'] === 'diterima') {
+            if ($product->stock < $validated['jumlah']) {
+                return back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk barang keluar.'])->withInput();
+            }
+
+            // Kurangi stok
+            $product->stock -= $validated['jumlah'];
+            $product->save();
+        }
 
         BarangKeluar::create($validated);
 
-        return redirect()->route('barang_keluar.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
+        return redirect()->route('admin.barang_keluar.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
     }
 
     public function edit(BarangKeluar $barangKeluar)
@@ -55,25 +67,41 @@ class BarangKeluarController extends Controller
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'jumlah'     => 'required|integer|min:1',
+            'satuan'     => 'required|string',
             'tanggal'    => 'required|date',
+            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
         ]);
+
+        $product = Product::findOrFail($validated['product_id']);
+
+        // Jika status berubah ke diterima, kurangi stok
+        if ($validated['status_konfirmasi'] === 'diterima') {
+            if ($product->stock < $validated['jumlah']) {
+                return back()->withErrors(['jumlah' => 'Stok tidak mencukupi.'])->withInput();
+            }
+
+            $product->stock -= $validated['jumlah'];
+            $product->save();
+        }
 
         $barangKeluar->update($validated);
 
-        return redirect()->route('barang-keluar.index')->with('success', 'Transaksi berhasil diperbarui.');
+        return redirect()->route('admin.barang_keluar.index')->with('success', 'Transaksi barang keluar berhasil diperbarui.');
     }
 
     public function destroy(BarangKeluar $barangKeluar)
     {
+        // Jika status diterima, kembalikan stok
         if ($barangKeluar->status_konfirmasi === 'diterima') {
-            // Jika status diterima, update stok produk
             $product = $barangKeluar->product;
-            $product->stock += $barangKeluar->jumlah;
-            $product->save();
+            if ($product) {
+                $product->stok += $barangKeluar->jumlah;
+                $product->save();
+            }
         }
 
         $barangKeluar->delete();
 
-        return redirect()->route('barang-keluar.index')->with('success', 'Data barang keluar berhasil dihapus.');
+        return redirect()->route('admin.barang_keluar.index')->with('success', 'Data barang keluar berhasil dihapus.');
     }
 }

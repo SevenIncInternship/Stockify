@@ -10,8 +10,12 @@ return new class extends Migration
     {
         Schema::create('barang_keluars', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
+
             $table->integer('jumlah');
+            $table->string('satuan');
             $table->date('tanggal');
             $table->string('status_konfirmasi')->default('pending');
             $table->timestamps();
