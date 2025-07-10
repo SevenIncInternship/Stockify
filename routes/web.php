@@ -17,6 +17,7 @@ use App\Http\Controllers\StaffBarangMasukController;
 use App\Http\Controllers\StaffBarangKeluarController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
 
 /*
@@ -149,6 +150,16 @@ Route::middleware(['auth'])->group(function () {
                 'edit' => 'suppliers.edit',
                 'update' => 'suppliers.update',
                 'destroy' => 'suppliers.destroy',
+            ]);
+
+            Route::resource('/user', UserController::class)->names([
+                'index' => 'users.index',
+                'create' => 'users.create',
+                'store' => 'users.store',
+                'show' => 'users.show',
+                'edit' => 'users.edit',
+                'update' => 'users.update',
+                'destroy' => 'users.destroy',
             ]);
 
             // Rute Laporan (khusus Admin)
