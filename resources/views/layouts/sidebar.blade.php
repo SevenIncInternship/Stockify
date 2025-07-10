@@ -26,9 +26,9 @@
                 ['route' => 'admin.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
                 ['route' => 'admin.category.index', 'icon' => 'fa-tags', 'label' => 'Kategori', 'color' => 'yellow'],
                 ['route' => 'admin.suppliers.index', 'icon' => 'fa-truck', 'label' => 'Supplier', 'color' => 'purple'],
+                ['route' => 'admin.users.index', 'icon' => 'fa-user', 'label' => 'User', 'color' => 'black'],
             ];
         @endphp
-
         <ul class="space-y-1">
             @foreach ($navItems as $item)
                 <li>

@@ -14,63 +14,46 @@ use Carbon\Carbon;
 class AdminDashboardController extends Controller
 {
     public function index()
-    {
-        // Ringkasan Data
-        $totalProduk    = Product::count();
-        $totalMasuk     = BarangMasuk::count();
-        $totalKeluar    = BarangKeluar::count();
-        $totalUser      = User::count();
-        $totalKategori  = Category::count();
-        $totalSupplier  = Supplier::count();
+{
+    $totalProduk    = Product::count();
+    $totalMasuk     = BarangMasuk::count();
+    $totalKeluar    = BarangKeluar::count();
+    $totalUser      = User::count();
+    $totalKategori  = Category::count();
+    $totalSupplier  = Supplier::count();
 
-        // Pengguna Terbaru (5 terakhir)
-        $penggunaTerbaru = User::latest()->take(5)->get();
+    $labelsProduk   = Product::pluck('nama')->toArray();
+    $stokDataProduk = Product::pluck('stock')->toArray();
 
-        // Grafik Stok Produk
-        $labelsProduk   = Product::pluck('nama')->toArray();
-        $stokDataProduk = Product::pluck('stock')->toArray();
+    $labelsHarian = [];
+    $dataMasukHarian = [];
+    $dataKeluarHarian = [];
 
-        // Data Harian untuk 7 hari terakhir
-        $startDate = Carbon::now()->subDays(6)->startOfDay();
+    for ($i = 0; $i < 7; $i++) {
+        $tanggalCarbon = \Carbon\Carbon::now()->subDays(6 - $i);
+        $tanggal = $tanggalCarbon->format('Y-m-d');
+        $labelTampil = $tanggalCarbon->format('d M'); // contoh: 10 Jul
+        $labelsHarian[] = $labelTampil;
 
-       // Gunakan DB::raw untuk grouping
-        $barangMasukHarian = BarangMasuk::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
-            ->where('created_at', '>=', '2025-06-29 00:00:00')
-            ->groupByRaw('DATE(created_at)')
-            ->orderBy('tanggal', 'asc')
-            ->get();
+        $dataMasuk = \App\Models\BarangMasuk::whereDate('created_at', $tanggal)->sum('jumlah');
+        $dataKeluar = \App\Models\BarangKeluar::whereDate('created_at', $tanggal)->sum('jumlah');
 
-        // Gunakan DB::raw untuk grouping
-        $barangKeluarHarian = BarangKeluar::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
-            ->where('created_at', '>=', '2025-06-29 00:00:00')
-            ->groupByRaw('DATE(created_at)')
-            ->orderBy('tanggal', 'asc')
-            ->get();
-
-        $labelsHarian     = [];
-        $dataMasukHarian  = [];
-        $dataKeluarHarian = [];
-
-        for ($i = 0; $i < 7; $i++) {
-            $tanggal = Carbon::now()->subDays(6 - $i)->format('Y-m-d');
-            $labelsHarian[]     = $tanggal;
-            $dataMasukHarian[]  = $barangMasukHarian[$tanggal]->total ?? 0;
-            $dataKeluarHarian[] = $barangKeluarHarian[$tanggal]->total ?? 0;
-        }
-
-        return view('admin.dashboard', compact(
-            'totalProduk',
-            'totalMasuk',
-            'totalKeluar',
-            'totalUser',
-            'totalKategori',
-            'totalSupplier',
-            'penggunaTerbaru',
-            'labelsProduk',
-            'stokDataProduk',
-            'labelsHarian',
-            'dataMasukHarian',
-            'dataKeluarHarian'
-        ));
+        $dataMasukHarian[] = $dataMasuk;
+        $dataKeluarHarian[] = $dataKeluar;
     }
+
+    return view('admin.dashboard', compact(
+        'totalProduk',
+        'totalMasuk',
+        'totalKeluar',
+        'totalUser',
+        'totalKategori',
+        'totalSupplier',
+        'labelsProduk',
+        'stokDataProduk',
+        'labelsHarian',
+        'dataMasukHarian',
+        'dataKeluarHarian'
+    ));
+}
 }
