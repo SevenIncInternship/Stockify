@@ -1,22 +1,47 @@
 @extends('layouts.app')
-@section('title', 'Dashboard Staff Gudang')
-@section('content')
-<div class="space-y-6">
-    <div class="bg-white p-4 shadow rounded">
-        <h2 class="text-xl font-bold mb-2">Tugas Harian</h2>
-        <ul class="list-disc ml-5">
-            @foreach($barangMasukPending as $bm)
-                <li>Barang Masuk: {{ $bm->nama_barang }} ({{ $bm->jumlah }} {{ $bm->satuan }})
-                    <a href="{{ route('staff.barangMasuk.konfirmasi', $bm->id) }}" class="text-blue-500 underline ml-2">Konfirmasi</a>
-                </li>
-            @endforeach
 
-            @foreach($barangKeluarPending as $bk)
-                <li>Barang Keluar: {{ $bk->nama_barang }} ({{ $bk->jumlah }} {{ $bk->satuan }})
-                    <a href="{{ route('staff.barangKeluar.konfirmasi', $bk->id) }}" class="text-blue-500 underline ml-2">Konfirmasi</a>
-                </li>
+@section('content')
+<div class="container">
+    <h1>Dashboard Staff Gudang</h1>
+
+    <h2>Barang Masuk (Pending)</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produk</th>
+                <th>Jumlah</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($barangMasukPending as $bm)
+                <tr>
+                    <td>{{ $bm->product->nama ?? '-' }}</td>
+                    <td>{{ $bm->jumlah }} {{ $bm->product->satuan ?? '' }}</td>
+                    <td>{{ $bm->status_konfirmasi }}</td>
+                </tr>
             @endforeach
-        </ul>
-    </div>
+        </tbody>
+    </table>
+
+    <h2>Barang Keluar (Pending)</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produk</th>
+                <th>Jumlah</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($barangKeluarPending as $bk)
+                <tr>
+                    <td>{{ $bk->product->nama ?? '-' }}</td>
+                    <td>{{ $bk->jumlah }} {{ $bk->product->satuan ?? '' }}</td>
+                    <td>{{ $bk->status_konfirmasi }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
 @endsection

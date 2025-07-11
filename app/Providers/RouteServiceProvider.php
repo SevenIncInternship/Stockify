@@ -39,6 +39,13 @@ class RouteServiceProvider extends ServiceProvider
             // Middleware 'web' untuk rute web standar
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
+            // Tambahkan untuk manajer dan staff
+            Route::middleware('web')
+                ->group(base_path('routes/manajer.php'));
+
+            Route::middleware('web')
+                ->group(base_path('routes/staff.php'));
         });
     }
 

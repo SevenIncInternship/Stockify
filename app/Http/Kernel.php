@@ -8,12 +8,10 @@ class Kernel extends HttpKernel
 {
     /**
      * Global HTTP middleware stack.
-     * Middleware ini dijalankan untuk setiap request masuk ke aplikasi.
      *
-     * @var array<int, class-string|string>
+     * Middleware ini dijalankan untuk setiap request HTTP ke aplikasi.
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -24,9 +22,9 @@ class Kernel extends HttpKernel
 
     /**
      * Route middleware groups.
-     * Group middleware yang digunakan untuk web dan API.
      *
-     * @var array<string, array<int, class-string|string>>
+     * Web group untuk aplikasi berbasis browser.
+     * API group untuk API berbasis token atau REST.
      */
     protected $middlewareGroups = [
         'web' => [
@@ -39,30 +37,34 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
     /**
-     * Middleware aliases.
-     * Alias digunakan untuk penamaan middleware yang lebih pendek di route.
+     * Route middleware.
      *
-     * @var array<string, class-string|string>
+     * Ini adalah alias middleware yang bisa digunakan pada rute tertentu.
      */
     protected $middlewareAliases = [
+        // Autentikasi
         'auth'             => \App\Http\Middleware\Authenticate::class,
         'auth.basic'       => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session'     => \Illuminate\Session\Middleware\AuthenticateSession::class,
-        'cache.headers'    => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+
+        // Akses dan otorisasi
         'can'              => \Illuminate\Auth\Middleware\Authorize::class,
         'guest'            => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
+        // Lainnya
+        'cache.headers'    => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'signed'           => \App\Http\Middleware\ValidateSignature::class,
         'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'role'             => \App\Http\Middleware\RoleMiddleware::class, // ✅ Middleware Role untuk pengecekan peran
-        'redirect.role' => \App\Http\Middleware\RedirectRoleMiddleware::class,
+
+        // ✅ Custom Middleware
+        'role'             => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }

@@ -9,11 +9,6 @@ class Product extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'nama',
         'kategori_id', 
@@ -22,19 +17,23 @@ class Product extends Model
         'satuan',
     ];
 
-    /**
-     * Relasi ke kategori (Category)
-     */
     public function category()
     {
         return $this->belongsTo(Category::class, 'kategori_id');
     }
 
-    /**
-     * Relasi ke supplier (Supplier)
-     */
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
+
+    public function barangMasuks()
+    {
+        return $this->hasMany(BarangMasuk::class, 'product_id');
+    }
+
+    public function barangKeluars()
+    {
+        return $this->hasMany(BarangKeluar::class, 'product_id');
     }
 }

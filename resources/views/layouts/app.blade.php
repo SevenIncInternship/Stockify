@@ -17,7 +17,7 @@
         {{-- Layout untuk pengguna yang sudah login (dengan Sidebar dan Navbar) --}}
         <div class="flex min-h-screen"> {{-- Menggunakan flex untuk sidebar dan konten utama --}}
             <!-- Sidebar -->
-            @include('layouts.sidebar')
+            @include('layouts.partials.sidebar')
 
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col ml-64"> {{-- ml-64 untuk mengimbangi lebar sidebar --}}

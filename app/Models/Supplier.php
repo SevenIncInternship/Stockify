@@ -10,6 +10,11 @@ class Supplier extends Model
 
     public function barangMasuks()
     {
-        return $this->hasMany(BarangMasuk::class);
+        return $this->hasMany(BarangMasuk::class, 'supplier_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'supplier_id');
     }
 }

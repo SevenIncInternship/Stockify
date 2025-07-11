@@ -2,189 +2,117 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-// use App\Http\Controllers\AuthController; // Ini mungkin tidak lagi diperlukan jika semua auth dipindahkan ke LoginController/RegisterController
+
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\LoginController; // Tambahkan ini untuk LoginController
+use App\Http\Controllers\Auth\LoginController;
 
-use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ManajerDashboardController;
+use App\Http\Controllers\StaffDashboardController;
+
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
-use App\Http\Controllers\StaffBarangMasukController;
-use App\Http\Controllers\StaffBarangKeluarController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\LaporanController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Di sinilah Anda dapat mendaftarkan rute web untuk aplikasi Anda.
-| Rute ini dimuat oleh RouteServiceProvider dalam grup yang
-| berisi middleware "web". Buat sesuatu yang hebat!
-|
-*/
+use App\Http\Controllers\StaffBarangMasukController;
+use App\Http\Controllers\StaffBarangKeluarController;
 
-// =========================================================
-// HALAMAN AWAL (Welcome)
-// Jika pengguna sudah login, arahkan ke dashboard sesuai peran.
-// Jika belum, tampilkan halaman welcome.
-// =========================================================
+use App\Http\Controllers\Manajer\ManajerBarangMasukController;
+use App\Http\Controllers\Manajer\ManajerBarangKeluarController;
+use App\Http\Controllers\Manajer\ManajerProdukController;
+use App\Http\Controllers\Manajer\ManajerSupplierController;
+use App\Http\Controllers\Manajer\ManajerLaporanController;
+
+
+// =================== HALAMAN UTAMA =====================
 Route::get('/', function () {
-    // Jika pengguna sudah login, langsung arahkan ke dashboard sesuai role
-    if (Auth::check()) {
-        return redirect()->route('redirect.role');
-    }
-
-    // Jika belum login, tampilkan halaman welcome
-    return view('welcome');
+    return Auth::check()
+        ? redirect()->route('redirect.role')
+        : view('welcome');
 })->name('welcome');
 
-// =========================================================
-// AUTENTIKASI (Hanya untuk GUEST - Pengguna yang belum login)
-// =========================================================
+// =================== AUTENTIKASI =====================
 Route::middleware(['guest'])->group(function () {
-    // Rute Login (menggunakan LoginController)
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
-
-    // Rute Register (menggunakan RegisterController standar Laravel)
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
-
-    // Rute Lupa Kata Sandi (menggunakan ForgotPasswordController)
     Route::get('/lupa', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/lupa', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 });
 
-// =========================================================
-// LOGOUT (Untuk pengguna yang sudah login)
-// =========================================================
-// Rute Logout (menggunakan LoginController)
+// =================== LOGOUT =====================
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// =========================================================
-// RUTE YANG MEMBUTUHKAN AUTENTIKASI (AUTH)
-// =========================================================
+// =================== RUTE TERLINDUNGI (LOGIN) =====================
 Route::middleware(['auth'])->group(function () {
 
-    // Rute pengalihan setelah login berdasarkan peran pengguna.
-    // Ini adalah tujuan 'HOME' yang didefinisikan di RouteServiceProvider.
+    // === Redirect ke dashboard sesuai role ===
     Route::get('/redirect-role', function () {
-        $user = Auth::user(); // Pengguna dijamin ada karena middleware 'auth'
+        $user = Auth::user();
 
-        // Mengarahkan pengguna ke dashboard yang sesuai berdasarkan perannya.
         return match ($user->role) {
             'admin'   => redirect()->route('admin.dashboard'),
             'manajer' => redirect()->route('manajer.dashboard'),
             'staff'   => redirect()->route('staff.dashboard'),
-            // Jika peran tidak dikenal atau tidak memiliki rute dashboard spesifik,
-            // kembalikan error 403 Forbidden.
-            default   => abort(403, 'Peran pengguna tidak dikenal atau tidak memiliki akses dashboard.'),
+            default   => abort(403, 'Peran pengguna tidak dikenal.'),
         };
     })->name('redirect.role');
 
+    // ================= ADMIN =================
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    // =========================================================
-    // ADMIN ROUTES (prefix + middleware role:admin)
-    // =========================================================
-    Route::middleware('role:admin')
-        ->prefix('admin')
-        ->name('admin.')
-        ->group(function () {
-            Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::resource('products', ProductController::class)->names('product');
+        Route::resource('barang_masuk', BarangMasukController::class)->names('barang_masuk');
+        Route::resource('barang_keluar', BarangKeluarController::class)->names('barang_keluar');
+        Route::resource('categories', CategoryController::class)->names('category');
+        Route::resource('suppliers', SupplierController::class)->names('suppliers');
 
-            // Resource routes untuk manajemen data master
-            Route::resource('/products', ProductController::class)->names([
-                'index' => 'product.index',
-                'create' => 'product.create',
-                'store' => 'product.store',
-                'show' => 'product.show',
-                'edit' => 'product.edit', 
-                'update' => 'product.update',
-                'destroy' => 'product.destroy',
-            ]);
-            
-            Route::resource('/barang_masuk', BarangMasukController::class)->names([
-                'index' => 'barang_masuk.index',
-                'create' => 'barang_masuk.create',
-                'store' => 'barang_masuk.store',
-                'show' => 'barang_masuk.show',
-                'edit' => 'barang_masuk.edit',
-                'update' => 'barang_masuk.update',
-                'destroy' => 'barang_masuk.destroy',
-                'konfirmasi'=>'barang_masuk.konfirmasi',
-            ]);
-            
-            Route::resource('/barang_keluar', BarangKeluarController::class)->names([
-                'index' => 'barang_keluar.index',
-                'create' => 'barang_keluar.create',
-                'store' => 'barang_keluar.store',
-                'show' => 'barang_keluar.show',
-                'edit' => 'barang_keluar.edit',
-                'update' => 'barang_keluar.update',
-                'destroy' => 'barang_keluar.destroy',
-            ]);
-            
-            Route::resource('/categories', CategoryController::class)->names([
-                'index' => 'category.index',
-                'create' => 'category.create',
-                'store' => 'category.store',
-                'show' => 'category.show',
-                'edit' => 'category.edit',
-                'update' => 'category.update',
-                'destroy' => 'category.destroy',
-            ]);
-            
-            Route::resource('/suppliers', SupplierController::class)->names([
-                'index' => 'suppliers.index',
-                'create' => 'suppliers.create',
-                'store' => 'suppliers.store',
-                'show' => 'suppliers.show',
-                'edit' => 'suppliers.edit',
-                'update' => 'suppliers.update',
-                'destroy' => 'suppliers.destroy',
-            ]);
+        Route::get('laporan/barang-masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
+    });
 
-            // Rute Laporan (khusus Admin)
-            Route::get('/laporan/barang-masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
-            // Tambahkan rute laporan lain di sini jika diperlukan
-        });
+        // ================= MANAJER =================
+    Route::middleware(['role:manajer'])->prefix('manajer')->name('manajer.')->group(function () {
+        Route::get('/dashboard', [ManajerDashboardController::class, 'index'])->name('dashboard');
 
-    // =========================================================
-    // MANAJER ROUTES (prefix + middleware role:manajer)
-    // =========================================================
-    Route::middleware('role:manajer')
-        ->prefix('manajer')
-        ->name('manajer.')
-        ->group(function () {
-            Route::get('/dashboard', [ManajerDashboardController::class, 'index'])->name('dashboard');
-            // Tambahan rute manajer bisa ditulis di sini
-        });
+        //barangmasuk
+        Route::resource('barang_masuk', ManajerBarangMasukController::class)->names('barang_masuk');
+        //barangkeluar
+        Route::resource('barang_keluar', ManajerBarangKeluarController::class)->names('barang_keluar');
+        Route::prefix('manajer')->middleware(['auth', 'role:manajer'])->group(function () {
+        Route::resource('barang_keluar', \App\Http\Controllers\Manajer\ManajerBarangKeluarController::class)->names('manajer.barang_keluar');});
+        //produk
+        Route::resource('produk', ManajerProdukController::class)->names('produk');
+        //supplier
+        Route::resource('supplier', ManajerSupplierController::class)->names('supplier');
+        Route::get('laporan', [ManajerLaporanController::class, 'index'])->name('laporan.index');
+    });
 
-    // =========================================================
-    // STAFF ROUTES (prefix + middleware role:staff)
-    // =========================================================
-    Route::middleware('role:staff')
-        ->prefix('staff')
-        ->name('staff.')
-        ->group(function () {
-            Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
 
-            // Barang Masuk konfirmasi
-            Route::get('/barang_masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'konfirmasi'])->name('barangMasuk.konfirmasi');
-            Route::put('/barang_masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'update'])->name('barangMasuk.update_konfirmasi');
+    // ================= STAFF =================
+    Route::middleware(['role:staff'])->prefix('staff')->name('staff.')->group(function () {
+        Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
 
-            // Barang Keluar konfirmasi
-            Route::get('/barang_keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'konfirmasi'])->name('barangKeluar.konfirmasi');
-            Route::put('/barang_keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'update'])->name('barangKeluar.update_konfirmasi');
-        });
+        Route::get('barang_masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'konfirmasi'])->name('barangMasuk.konfirmasi');
+        Route::put('barang_masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'update'])->name('barangMasuk.update_konfirmasi');
 
-    // Rute tambahan non-role dapat diletakkan di sini, di dalam grup 'auth'
-    // Contoh: Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
+        Route::get('barang_keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'konfirmasi'])->name('barangKeluar.konfirmasi');
+        Route::put('barang_keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'update'])->name('barangKeluar.update_konfirmasi');
+    });
+
+    Route::get('/redirect-role', function () {
+    $user = Auth::user();
+    return match ($user->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'manajer' => redirect()->route('manajer.dashboard'),
+        'staff' => redirect()->route('staff.dashboard'),
+        default => abort(403),
+    };
+    })->name('redirect.role');
+
 });

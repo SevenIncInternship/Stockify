@@ -19,16 +19,17 @@ class BarangMasuk extends Model
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal' => 'date', // Sudah benar untuk format() langsung
     ];
 
-    public function product()
+    public function produk()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'produk_id');
     }
+
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 }

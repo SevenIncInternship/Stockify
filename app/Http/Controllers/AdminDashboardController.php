@@ -10,6 +10,7 @@ use App\Models\BarangKeluar;
 use App\Models\Category;
 use App\Models\Supplier;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
@@ -28,25 +29,24 @@ class AdminDashboardController extends Controller
 
         // Grafik Stok Produk
         $labelsProduk   = Product::pluck('nama')->toArray();
-        $stokDataProduk = Product::pluck('stock')->toArray();
+        $stokDataProduk = Product::pluck('stok')->toArray();
 
-        // Data Harian untuk 7 hari terakhir
+        // Tanggal mulai: 6 hari sebelum hari ini
         $startDate = Carbon::now()->subDays(6)->startOfDay();
 
-       // Gunakan DB::raw untuk grouping
+        // Barang Masuk Harian
         $barangMasukHarian = BarangMasuk::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
-            ->where('created_at', '>=', '2025-06-29 00:00:00')
+            ->where('created_at', '>=', $startDate)
             ->groupByRaw('DATE(created_at)')
-            ->orderBy('tanggal', 'asc')
-            ->get();
+            ->pluck('total', 'tanggal');
 
-        // Gunakan DB::raw untuk grouping
+        // Barang Keluar Harian
         $barangKeluarHarian = BarangKeluar::selectRaw('DATE(created_at) as tanggal, SUM(jumlah) as total')
-            ->where('created_at', '>=', '2025-06-29 00:00:00')
+            ->where('created_at', '>=', $startDate)
             ->groupByRaw('DATE(created_at)')
-            ->orderBy('tanggal', 'asc')
-            ->get();
+            ->pluck('total', 'tanggal');
 
+        // Siapkan data 7 hari ke belakang
         $labelsHarian     = [];
         $dataMasukHarian  = [];
         $dataKeluarHarian = [];
@@ -54,8 +54,8 @@ class AdminDashboardController extends Controller
         for ($i = 0; $i < 7; $i++) {
             $tanggal = Carbon::now()->subDays(6 - $i)->format('Y-m-d');
             $labelsHarian[]     = $tanggal;
-            $dataMasukHarian[]  = $barangMasukHarian[$tanggal]->total ?? 0;
-            $dataKeluarHarian[] = $barangKeluarHarian[$tanggal]->total ?? 0;
+            $dataMasukHarian[]  = $barangMasukHarian[$tanggal] ?? 0;
+            $dataKeluarHarian[] = $barangKeluarHarian[$tanggal] ?? 0;
         }
 
         return view('admin.dashboard', compact(

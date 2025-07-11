@@ -10,8 +10,7 @@ class BarangKeluarController extends Controller
 {
     public function index()
     {
-        // Pakai paginate agar bisa pakai hasPages() dan links() di view
-        $barangKeluar = BarangKeluar::with('product')->latest()->paginate(10);
+        $barangKeluar = BarangKeluar::with('produk')->latest()->paginate(10);
         return view('barang_keluar.index', compact('barangKeluar'));
     }
 
@@ -24,7 +23,7 @@ class BarangKeluarController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'produk_id' => 'required|exists:products,id',
             'jumlah' => 'required|integer|min:1',
             'tanggal' => 'required|date',
         ]);
@@ -53,27 +52,26 @@ class BarangKeluarController extends Controller
         }
 
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'jumlah'     => 'required|integer|min:1',
-            'tanggal'    => 'required|date',
+            'produk_id' => 'required|exists:products,id',
+            'jumlah'    => 'required|integer|min:1',
+            'tanggal'   => 'required|date',
         ]);
 
         $barangKeluar->update($validated);
 
-        return redirect()->route('barang-keluar.index')->with('success', 'Transaksi berhasil diperbarui.');
+        return redirect()->route('barang_keluar.index')->with('success', 'Transaksi berhasil diperbarui.');
     }
 
     public function destroy(BarangKeluar $barangKeluar)
     {
         if ($barangKeluar->status_konfirmasi === 'diterima') {
-            // Jika status diterima, update stok produk
-            $product = $barangKeluar->product;
+            $product = $barangKeluar->produk;
             $product->stock += $barangKeluar->jumlah;
             $product->save();
         }
 
         $barangKeluar->delete();
 
-        return redirect()->route('barang-keluar.index')->with('success', 'Data barang keluar berhasil dihapus.');
+        return redirect()->route('barang_keluar.index')->with('success', 'Data barang keluar berhasil dihapus.');
     }
 }
