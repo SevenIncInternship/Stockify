@@ -1,34 +1,41 @@
+@php
+    $role = auth()->user()->role;
+
+    $navItems = $role === 'admin'
+        ? [
+            ['route' => 'admin.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
+            ['route' => 'admin.barang_masuk.index', 'icon' => 'fa-arrow-down', 'label' => 'Barang Masuk', 'color' => 'cyan'],
+            ['route' => 'admin.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
+            ['route' => 'admin.product.index', 'icon' => 'fa-box', 'label' => 'Stok Produk', 'color' => 'green'],
+            ['route' => 'admin.category.index', 'icon' => 'fa-tags', 'label' => 'Kategori', 'color' => 'yellow'],
+            ['route' => 'admin.suppliers.index', 'icon' => 'fa-truck', 'label' => 'Supplier', 'color' => 'purple'],
+            ['route' => 'admin.users.index', 'icon' => 'fa-user', 'label' => 'Kelola User', 'color' => 'black'],
+        ]
+        : [
+            ['route' => 'manajer.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
+            ['route' => 'manajer.barang_masuk.index', 'icon' => 'fa-arrow-down', 'label' => 'Barang Masuk', 'color' => 'cyan'],
+            ['route' => 'manajer.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
+            ['route' => 'manajer.product.index', 'icon' => 'fa-box', 'label' => 'Stok Produk', 'color' => 'green'],
+            ['route' => 'manajer.stock_opname.index', 'icon' => 'fa-clipboard-check', 'label' => 'Stok Opname', 'color' => 'yellow'],
+        ];
+@endphp
+
 <div class="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl min-h-screen relative overflow-hidden">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"4\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-    {{-- Background SVG pattern --}}
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-
-    {{-- Header --}}
     <div class="relative z-10 p-6 border-b border-slate-700/50">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                 <i class="fas fa-cube text-white text-lg"></i>
             </div>
             <div>
-                <h2 class="text-white font-bold text-lg">Admin Panel</h2>
+                <h2 class="text-white font-bold text-lg">{{ ucfirst($role) }} Panel</h2>
                 <p class="text-slate-400 text-xs">Inventory Management</p>
             </div>
         </div>
     </div>
 
-    {{-- Menu Navigasi --}}
     <nav class="relative z-10 p-4 space-y-2">
-        @php
-            $navItems = [
-                ['route' => 'admin.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
-                ['route' => 'admin.product.index', 'icon' => 'fa-box', 'label' => 'Produk', 'color' => 'green'],
-                ['route' => 'admin.barang_masuk.index', 'icon' => 'fa-arrow-down', 'label' => 'Barang Masuk', 'color' => 'cyan'],
-                ['route' => 'admin.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
-                ['route' => 'admin.category.index', 'icon' => 'fa-tags', 'label' => 'Kategori', 'color' => 'yellow'],
-                ['route' => 'admin.suppliers.index', 'icon' => 'fa-truck', 'label' => 'Supplier', 'color' => 'purple'],
-                ['route' => 'admin.users.index', 'icon' => 'fa-user', 'label' => 'User', 'color' => 'black'],
-            ];
-        @endphp
         <ul class="space-y-1">
             @foreach ($navItems as $item)
                 <li>
@@ -54,10 +61,8 @@
         </ul>
     </nav>
 
-    {{-- Divider --}}
     <div class="relative z-10 mx-4 my-4 border-t border-slate-700/50"></div>
 
-    {{-- User Info --}}
     <div class="relative z-10 p-4">
         <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
             <div class="flex items-center space-x-3 mb-3">
@@ -65,8 +70,8 @@
                     <i class="fas fa-user text-white text-sm"></i>
                 </div>
                 <div>
-                    <p class="text-white font-medium text-sm">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                    <p class="text-slate-400 text-xs">{{ Auth::user()->email ?? 'admin@example.com' }}</p>
+                    <p class="text-white font-medium text-sm">{{ Auth::user()->name ?? ucfirst($role) }}</p>
+                    <p class="text-slate-400 text-xs">{{ Auth::user()->email ?? $role.'@example.com' }}</p>
                 </div>
             </div>
             <a href="{{ route('logout') }}"
@@ -80,10 +85,8 @@
         </div>
     </div>
 
-    {{-- Background bottom gradient --}}
     <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none"></div>
 
-    {{-- Hidden logout form --}}
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
         @csrf
     </form>
