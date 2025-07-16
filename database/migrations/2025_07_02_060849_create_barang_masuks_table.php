@@ -9,7 +9,6 @@ return new class extends Migration {
         Schema::create('barang_masuks', function (Blueprint $table) {
             $table->id();
 
-            // Foreign key harus tidak nullable kalau memang required
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
 
