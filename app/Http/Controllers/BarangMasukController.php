@@ -7,10 +7,22 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class BarangMasukController extends Controller
 {
+    private function getPrefixByRole()
+    {
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            return 'admin';
+        } elseif ($user->role === 'manajer') {
+            return 'manajer';
+        } else {
+            abort(403, 'Role tidak diizinkan.');
+        }
+    }
+
     public function index()
     {
         $barangMasuk = BarangMasuk::with('product')->latest()->paginate(10);
@@ -18,12 +30,20 @@ class BarangMasukController extends Controller
     }
 
     public function create()
-    {
-        $products = Product::with('category')->get();
-        $suppliers = Supplier::all();
-        $categories = Category::all();
-        return view('barang_masuk.create', compact('products', 'suppliers', 'categories'));
-    }
+{
+    $products = Product::with('category')->get();
+    $suppliers = Supplier::all();
+    $categories = Category::all();
+    $defaultTanggal = now()->format('Y-m-d\TH:i');
+
+    $rolePrefix = $this->getPrefixByRole(); // ⬅️ tambahkan ini
+
+    return view('barang_masuk.create', compact(
+        'products', 'suppliers', 'categories', 'defaultTanggal', 'rolePrefix'
+    ));
+}
+
+
 
     public function store(Request $request)
     {
@@ -43,7 +63,6 @@ class BarangMasukController extends Controller
             'supplier_baru' => 'nullable|string|max:255|required_without:supplier_id',
         ]);
 
-        // === SUPPLIER ===
         $supplierId = $request->supplier_id;
         if ($request->filled('supplier_baru')) {
             $supplier = Supplier::firstOrCreate(
@@ -53,55 +72,30 @@ class BarangMasukController extends Controller
             $supplierId = $supplier->id;
         }
 
-        // === KATEGORI ===
         $kategoriId = $request->kategori_id;
         if ($request->filled('kategori_baru')) {
-            $kategori = Category::firstOrCreate(
-                ['nama' => trim($request->kategori_baru)]
-            );
+            $kategori = Category::firstOrCreate(['nama' => trim($request->kategori_baru)]);
             $kategoriId = $kategori->id;
         }
 
-        // === PRODUK ===
-        $produk = null;
         $productId = $request->product_id;
-
         if ($request->filled('produk_baru')) {
-            $namaProdukBaru = trim($request->produk_baru);
-
-            if (!$namaProdukBaru) {
-                return back()->withErrors(['produk_baru' => 'Nama produk tidak boleh kosong.'])->withInput();
-            }
-
-            if (!$kategoriId) {
-                return back()->withErrors(['kategori_id' => 'Pilih kategori atau isi kategori baru untuk produk baru.'])->withInput();
-            }
-
-            $produk = new Product();
-            $produk->fill([
-                'nama' => $namaProdukBaru,
+            $produk = Product::create([
+                'nama' => trim($request->produk_baru),
                 'kategori_id' => $kategoriId,
                 'supplier_id' => $supplierId,
                 'stock' => 0,
                 'satuan' => $request->satuan,
             ]);
-            $produk->save();
-
             $productId = $produk->id;
         } else {
             $produk = Product::findOrFail($productId);
-
             if (!$produk->supplier_id && $supplierId) {
                 $produk->supplier_id = $supplierId;
                 $produk->save();
             }
         }
 
-        if (!$productId || !$produk) {
-            return back()->withErrors(['product_id' => 'Produk tidak valid atau gagal disimpan.'])->withInput();
-        }
-
-        // === SIMPAN BARANG MASUK ===
         $barangMasuk = BarangMasuk::create([
             'product_id' => $productId,
             'supplier_id' => $supplierId,
@@ -113,6 +107,47 @@ class BarangMasukController extends Controller
 
         $produk->increment('stock', $barangMasuk->jumlah);
 
-        return redirect()->route('admin.barang_masuk.index')->with('success', 'Barang masuk berhasil ditambahkan.');
+        $prefix = $this->getPrefixByRole();
+
+        return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil ditambahkan.');
+    }
+
+    public function edit($id)
+{
+    $barangMasuk = BarangMasuk::findOrFail($id);
+    $products = Product::with('category')->get();
+    $suppliers = Supplier::all();
+    $categories = Category::all();
+
+    $tanggalValue = now()->format('Y-m-d\TH:i'); // Selalu ambil waktu saat ini, bukan dari database
+
+    return view('barang_masuk.edit', compact('barangMasuk', 'products', 'suppliers', 'categories', 'tanggalValue'));
+}
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'jumlah' => 'required|integer|min:1',
+            'satuan' => 'required|string|in:kg,pcs,Lt',
+            'tanggal' => 'required|date',
+            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+        ]);
+
+        $barangMasuk = BarangMasuk::findOrFail($id);
+
+        $barangMasuk->update([
+            'product_id' => $request->product_id,
+            'supplier_id' => $request->supplier_id,
+            'jumlah' => $request->jumlah,
+            'satuan' => $request->satuan,
+            'tanggal' => $request->tanggal,
+            'status_konfirmasi' => $request->status_konfirmasi,
+        ]);
+
+        $prefix = $this->getPrefixByRole();
+
+        return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil diperbarui.');
     }
 }

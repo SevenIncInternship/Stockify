@@ -1,75 +1,92 @@
+@php
+    $rolePrefix = auth()->user()->role;
+@endphp
+
 @extends('layouts.app')
 
 @section('title', 'Edit Barang Masuk')
 
 @section('content')
-<div class="p-6 bg-white rounded-xl shadow-md max-w-xl mx-auto">
-    <h1 class="text-2xl font-bold mb-6 text-gray-800">Edit Barang Masuk</h1>
+<div class="max-w-xl mx-auto bg-white shadow p-6 rounded">
+    <h1 class="text-xl font-bold mb-4 text-gray-800">Edit Barang Masuk</h1>
 
-    <form method="POST" action="{{ route('admin.barang_masuk.update', $barang_masuk->id) }}" class="space-y-6">
+    @if ($errors->any())
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 p-3 rounded">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route($rolePrefix . '.barang_masuk.update', $barangMasuk->id) }}">
         @csrf
         @method('PUT')
 
-        {{-- Pilih Produk --}}
-        <div>
-            <label for="product_id" class="block text-sm font-medium text-gray-700 mb-1">Pilih Produk</label>
-            <select name="product_id" id="product_id" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        {{-- Produk --}}
+        <div class="mb-4">
+            <label for="product_id" class="block text-sm font-medium text-gray-700">Produk</label>
+            <select name="product_id" id="product_id" class="w-full p-2 border rounded" required>
                 @foreach ($products as $product)
-                    <option value="{{ $product->id }}" {{ $barang_masuk->product_id == $product->id ? 'selected' : '' }}>
-                        {{ $product->name }}
+                    <option value="{{ $product->id }}" {{ old('product_id', $barangMasuk->product_id) == $product->id ? 'selected' : '' }}>
+                        {{ $product->nama }}
                     </option>
                 @endforeach
             </select>
-            @error('product_id')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+        </div>
+
+        {{-- Supplier --}}
+        <div class="mb-4">
+            <label for="supplier_id" class="block text-sm font-medium text-gray-700">Supplier</label>
+            <select name="supplier_id" id="supplier_id" class="w-full p-2 border rounded" required>
+                @foreach ($suppliers as $supplier)
+                    <option value="{{ $supplier->id }}" {{ old('supplier_id', $barangMasuk->supplier_id) == $supplier->id ? 'selected' : '' }}>
+                        {{ $supplier->nama }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         {{-- Jumlah --}}
-        <div>
-            <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
-            <input type="number" id="jumlah" name="jumlah" value="{{ old('jumlah', $barang_masuk->jumlah) }}" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            @error('jumlah')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+        <div class="mb-4">
+            <label for="jumlah" class="block text-sm font-medium text-gray-700">Jumlah</label>
+            <input type="number" name="jumlah" id="jumlah" min="1" class="w-full p-2 border rounded"
+                value="{{ old('jumlah', $barangMasuk->jumlah) }}" required>
         </div>
 
         {{-- Satuan --}}
-        <div>
-            <label for="satuan" class="block text-sm font-medium text-gray-700 mb-1">Satuan</label>
-            <input type="text" id="satuan" name="satuan" value="{{ old('satuan', $barang_masuk->satuan) }}" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            @error('satuan')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Tanggal --}}
-        <div>
-            <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-            <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal', $barang_masuk->tanggal->format('Y-m-d')) }}" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            @error('tanggal')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Status Konfirmasi --}}
-        <div>
-            <label for="status_konfirmasi" class="block text-sm font-medium text-gray-700 mb-1">Status Konfirmasi</label>
-            <select name="status_konfirmasi" id="status_konfirmasi" class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <option value="pending" {{ $barang_masuk->status_konfirmasi == 'pending' ? 'selected' : '' }}>Pending</option>
-                <option value="diterima" {{ $barang_masuk->status_konfirmasi == 'diterima' ? 'selected' : '' }}>Diterima</option>
-                <option value="ditolak" {{ $barang_masuk->status_konfirmasi == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+        <div class="mb-4">
+            <label for="satuan" class="block text-sm font-medium text-gray-700">Satuan</label>
+            <select name="satuan" id="satuan" class="w-full p-2 border rounded" required>
+                <option value="kg" {{ old('satuan', $barangMasuk->satuan) == 'kg' ? 'selected' : '' }}>kg</option>
+                <option value="pcs" {{ old('satuan', $barangMasuk->satuan) == 'pcs' ? 'selected' : '' }}>pcs</option>
+                <option value="Lt" {{ old('satuan', $barangMasuk->satuan) == 'Lt' ? 'selected' : '' }}>Lt</option>
             </select>
-            @error('status_konfirmasi')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
         </div>
 
-        {{-- Tombol Simpan --}}
-        <div class="flex justify-end">
-            <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                Update
-            </button>
+        {{-- Tanggal dan Jam --}}
+        <div class="mb-4">
+            <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal dan Jam</label>
+            <input type="datetime-local" name="tanggal" id="tanggal" class="w-full p-2 border rounded"
+            value="{{ $tanggalValue }}" required>
+        </div>
+
+
+        {{-- Status --}}
+        <div class="mb-4">
+            <label for="status_konfirmasi" class="block text-sm font-medium text-gray-700">Status Konfirmasi</label>
+            <select name="status_konfirmasi" id="status_konfirmasi" class="w-full p-2 border rounded" required>
+                <option value="pending" {{ old('status_konfirmasi', $barangMasuk->status_konfirmasi) == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="diterima" {{ old('status_konfirmasi', $barangMasuk->status_konfirmasi) == 'diterima' ? 'selected' : '' }}>Diterima</option>
+                <option value="ditolak" {{ old('status_konfirmasi', $barangMasuk->status_konfirmasi) == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+            </select>
+        </div>
+
+        {{-- Tombol --}}
+        <div class="flex justify-end gap-2">
+            <a href="{{ route($rolePrefix . '.barang_masuk.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">Batal</a>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Update</button>
         </div>
     </form>
 </div>

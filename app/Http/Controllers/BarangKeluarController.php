@@ -14,11 +14,21 @@ class BarangKeluarController extends Controller
         return view('barang_keluar.index', compact('barangKeluar'));
     }
 
-    public function create()
-    {
-        $products = Product::all();
-        return view('barang_keluar.create', compact('products'));
-    }
+    public function create(Request $request)
+{
+    $products = Product::all();
+
+    $userRole = $request->user()->role;
+    $rolePrefix = match ($userRole) {
+        'admin' => 'admin',
+        'manajer' => 'manajer',
+        'staff' => 'staff',
+        default => 'guest', // fallback jika tidak cocok
+    };
+
+    return view('barang_keluar.create', compact('products', 'rolePrefix'));
+}
+
 
     public function store(Request $request)
     {
@@ -27,29 +37,45 @@ class BarangKeluarController extends Controller
             'jumlah'     => 'required|integer|min:1',
             'satuan'     => 'required|string',
             'tanggal'    => 'required|date',
-            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+            'status_konfirmasi' => 'nullable|in:pending,diterima,ditolak',
         ]);
+
+        $userRole = $request->user()->role;
+
+        // Role-based assignment
+        if ($userRole === 'staff') {
+            $validated['status_konfirmasi'] = 'pending';
+        } elseif ($userRole === 'manajer') {
+            // Manajer hanya bisa pilih pending atau diterima (dipastikan dari blade)
+            $validated['status_konfirmasi'] = $validated['status_konfirmasi'] ?? 'pending';
+        } elseif ($userRole === 'admin') {
+            // Admin bisa pilih semua status
+            $validated['status_konfirmasi'] = $validated['status_konfirmasi'] ?? 'pending';
+        }
 
         $product = Product::findOrFail($validated['product_id']);
 
-        // Jika status langsung diterima, cek stok cukup atau tidak
+        // Jika status diterima, cek stok
         if ($validated['status_konfirmasi'] === 'diterima') {
             if ($product->stock < $validated['jumlah']) {
-                return back()->withErrors(['jumlah' => 'Stok tidak mencukupi untuk barang keluar.'])->withInput();
+                return back()->withErrors(['jumlah' => 'Stok tidak mencukupi.'])->withInput();
             }
-
-            // Kurangi stok
             $product->stock -= $validated['jumlah'];
             $product->save();
         }
 
         BarangKeluar::create($validated);
 
-        return redirect()->route('admin.barang_keluar.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
+        return redirect()->route('admin.barang_keluar.index')
+            ->with('success', 'Barang keluar berhasil ditambahkan.');
     }
 
-    public function edit(BarangKeluar $barangKeluar)
+    public function edit(Request $request, BarangKeluar $barangKeluar)
     {
+        if ($request->user()->role === 'staff') {
+            return back()->withErrors(['error' => 'Anda tidak memiliki izin untuk mengedit.']);
+        }
+
         if ($barangKeluar->status_konfirmasi !== 'pending') {
             return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diedit.']);
         }
@@ -60,6 +86,10 @@ class BarangKeluarController extends Controller
 
     public function update(Request $request, BarangKeluar $barangKeluar)
     {
+        if ($request->user()->role === 'staff') {
+            return back()->withErrors(['error' => 'Anda tidak memiliki izin untuk memperbarui data ini.']);
+        }
+
         if ($barangKeluar->status_konfirmasi !== 'pending') {
             return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diperbarui.']);
         }
@@ -74,34 +104,37 @@ class BarangKeluarController extends Controller
 
         $product = Product::findOrFail($validated['product_id']);
 
-        // Jika status berubah ke diterima, kurangi stok
         if ($validated['status_konfirmasi'] === 'diterima') {
             if ($product->stock < $validated['jumlah']) {
                 return back()->withErrors(['jumlah' => 'Stok tidak mencukupi.'])->withInput();
             }
-
             $product->stock -= $validated['jumlah'];
             $product->save();
         }
 
         $barangKeluar->update($validated);
 
-        return redirect()->route('admin.barang_keluar.index')->with('success', 'Transaksi barang keluar berhasil diperbarui.');
+        return redirect()->route('admin.barang_keluar.index')
+            ->with('success', 'Transaksi barang keluar berhasil diperbarui.');
     }
 
-    public function destroy(BarangKeluar $barangKeluar)
+    public function destroy(Request $request, BarangKeluar $barangKeluar)
     {
-        // Jika status diterima, kembalikan stok
+        if ($request->user()->role === 'staff') {
+            return back()->withErrors(['error' => 'Anda tidak memiliki izin untuk menghapus data ini.']);
+        }
+
         if ($barangKeluar->status_konfirmasi === 'diterima') {
             $product = $barangKeluar->product;
             if ($product) {
-                $product->stok += $barangKeluar->jumlah;
+                $product->stock += $barangKeluar->jumlah;
                 $product->save();
             }
         }
 
         $barangKeluar->delete();
 
-        return redirect()->route('admin.barang_keluar.index')->with('success', 'Data barang keluar berhasil dihapus.');
+        return redirect()->route('admin.barang_keluar.index')
+            ->with('success', 'Data barang keluar berhasil dihapus.');
     }
 }

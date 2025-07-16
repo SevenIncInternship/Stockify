@@ -6,20 +6,29 @@ use Illuminate\Http\Request;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use App\Models\Product;
+use App\Models\StockOpname;
 
 class ManajerDashboardController extends Controller
 {
     public function index()
     {
-        // Ambil data yang relevan untuk manajer
-        $barangMasukHariIni = BarangMasuk::whereDate('created_at', today())->count();
-        $barangKeluarHariIni = BarangKeluar::whereDate('created_at', today())->count();
+        $barangMasuk = BarangMasuk::whereDate('created_at', today())->count();
+        $barangKeluar = BarangKeluar::whereDate('created_at', today())->count();
         $totalProduk = Product::count();
+        $stockOpname = StockOpname::count(); // Jika belum ada, bisa set default null
+
+        // Data untuk grafik stok
+        $produk = Product::select('nama', 'stock')->orderBy('nama')->take(10)->get();
+        $labelsProduk = $produk->pluck('nama');
+        $stokDataProduk = $produk->pluck('stock');
 
         return view('manajer.dashboard', [
-            'masukHariIni' => $barangMasukHariIni,
-            'keluarHariIni' => $barangKeluarHariIni,
+            'barangMasuk' => $barangMasuk,
+            'barangKeluar' => $barangKeluar,
             'totalProduk' => $totalProduk,
+            'totalOpname' => $stockOpname,
+            'labelsProduk' => $labelsProduk,
+            'stokDataProduk' => $stokDataProduk,
         ]);
     }
 }
