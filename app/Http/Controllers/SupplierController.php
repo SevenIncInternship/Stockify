@@ -30,7 +30,12 @@ class SupplierController extends Controller
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier berhasil ditambahkan');
     }
 
-    public function update(Request $request, Supplier $suppliers)
+    public function edit(Supplier $supplier)
+    {
+        return view('admin.suppliers.edit', compact('supplier'));
+    }
+
+    public function update(Request $request, Supplier $supplier)
     {
         $request->validate([
             'nama'    => 'required|string|max:255',
@@ -38,13 +43,13 @@ class SupplierController extends Controller
             'address' => 'nullable|string|max:255',
         ]);
 
-        $suppliers->update($request->all());
+        $supplier->update($request->all());
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier berhasil diperbarui');
     }
 
-    public function destroy(Supplier $suppliers)
+    public function destroy(Supplier $supplier)
     {
-        $suppliers->delete();
+        $supplier->delete();
         return back()->with('success', 'Supplier berhasil dihapus');
     }
 }
