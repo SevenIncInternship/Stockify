@@ -6,7 +6,7 @@
 <div class="p-6 bg-white rounded-xl shadow-md">
     <h1 class="text-2xl font-bold mb-6 text-gray-800">Edit Supplier</h1>
 
-    <form method="POST" action="{{ route('supplier.update', $supplier->id) }}" class="space-y-6">
+    <form method="POST" action="{{ route('admin.supplier.update', $supplier->id) }}" class="space-y-6">
         @csrf
         @method('PUT')
 

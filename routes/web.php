@@ -19,6 +19,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\StockOpnameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -163,7 +164,7 @@ Route::middleware(['auth'])->group(function () {
             ]);
 
             // Rute Laporan (khusus Admin)
-            Route::get('/laporan/barang-masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
+            Route::get('/laporan/barang_masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
             // Tambahkan rute laporan lain di sini jika diperlukan
         });
 
@@ -175,7 +176,50 @@ Route::middleware(['auth'])->group(function () {
         ->name('manajer.')
         ->group(function () {
             Route::get('/dashboard', [ManajerDashboardController::class, 'index'])->name('dashboard');
-            // Tambahan rute manajer bisa ditulis di sini
+           Route::resource('/products', ProductController::class)->names([
+                'index' => 'product.index',
+                'create' => 'product.create',
+                'store' => 'product.store',
+                'show' => 'product.show',
+                'edit' => 'product.edit', 
+                'update' => 'product.update',
+                'destroy' => 'product.destroy',
+            ]);
+            
+            Route::resource('/barang_masuk', BarangMasukController::class)->names([
+                'index' => 'barang_masuk.index',
+                'create' => 'barang_masuk.create',
+                'store' => 'barang_masuk.store',
+                'show' => 'barang_masuk.show',
+                'edit' => 'barang_masuk.edit',
+                'update' => 'barang_masuk.update',
+                'destroy' => 'barang_masuk.destroy',
+                'konfirmasi'=>'barang_masuk.konfirmasi',
+            ]);
+            
+            Route::resource('/barang_keluar', BarangKeluarController::class)->names([
+                'index' => 'barang_keluar.index',
+                'create' => 'barang_keluar.create',
+                'store' => 'barang_keluar.store',
+                'show' => 'barang_keluar.show',
+                'edit' => 'barang_keluar.edit',
+                'update' => 'barang_keluar.update',
+                'destroy' => 'barang_keluar.destroy',
+            ]);
+
+            Route::resource('/stock_opname', StockOpnameController::class)->names([
+                'index' => 'stock_opname.index',
+                'create' => 'stock_opname.create',
+                'store' => 'stock_opname.store',
+                'show' => 'stock_opname.show',
+                'edit' => 'stock_opname.edit',
+                'update' => 'stock_opname.update',
+                'destroy' => 'stock_opname.destroy',
+            ]);
+
+            Route::get('/dashboard/export/pdf', [\App\Http\Controllers\ManajerExportController::class, 'exportDashboard'])
+            ->name('dashboard_export_pdf');
+
         });
 
     // =========================================================

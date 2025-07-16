@@ -47,7 +47,7 @@
     <!-- Charts -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
         <!-- Grafik Stok Produk -->
-        <div class="bg-white rounded-xl shadow p-6">
+        <div class  ="bg-white rounded-xl shadow p-6">
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-800">Grafik Stok Produk</h2>
