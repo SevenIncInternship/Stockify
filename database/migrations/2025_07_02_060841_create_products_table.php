@@ -11,16 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('nama')->nullable();;
-            $table->foreignId('kategori_id')->nullable()->constrained('categories')->onDelete('set null');
-            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
+            $table->string('image')->nullable();
+            $table->string('nama');
+            $table->string('SKU')->unique()->nullable();
+            $table->foreignId('kategori_id')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->integer('stock')->default(0);
-            $table->string('satuan')->nullable();
+            $table->string('satuan');
+            $table->decimal('harga_beli', 15, 2)->nullable();
+            $table->decimal('harga_jual', 15, 2)->nullable();
+            $table->integer('minimal_stok')->default(0);
             $table->timestamps();
         });
-
     }
 
     /**

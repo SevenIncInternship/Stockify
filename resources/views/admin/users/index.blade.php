@@ -33,8 +33,8 @@
                         @method('PUT') <!-- penting untuk spoof PUT method -->
                         <select name="role" class="border rounded px-2 py-1">
                             <option value="admin" @selected($user->role === 'admin')>Admin</option>
-                            <option value="staff" @selected($user->role === 'staff')>Staff</option>
-                            <option value="user" @selected($user->role === 'user')>User</option>
+                            <option value="staff" @selected($user->role === 'manajer')>Manajer</option>
+                            <option value="user" @selected($user->role === 'staff')>Staff</option>
                         </select>
                         <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Update</button>
                     </form>

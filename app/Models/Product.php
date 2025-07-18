@@ -15,12 +15,18 @@ class Product extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama',
-        'kategori_id',
-        'supplier_id',
-        'stock',
-        'satuan',
-    ];
+    'image',
+    'nama',
+    'SKU',
+    'kategori_id',
+    'supplier_id',
+    'stock',
+    'satuan',
+    'harga_beli',
+    'harga_jual',
+    'minimal_stok',
+];
+
 
     /**
      * Relasi: Produk memiliki satu kategori.
