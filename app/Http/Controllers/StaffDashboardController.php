@@ -17,10 +17,10 @@ class StaffDashboardController extends Controller
     public function index()
     {
         // Mengambil semua transaksi barang masuk yang berstatus 'pending'
-        $barangMasukPending = BarangMasuk::where('status', 'pending')->get();
+        $barangMasukPending = BarangMasuk::where('status_konfirmasi', 'pending')->get();
 
         // Mengambil semua transaksi barang keluar yang berstatus 'pending'
-        $barangKeluarPending = BarangKeluar::where('status', 'pending')->get();
+        $barangKeluarPending = BarangKeluar::where('status_konfirmasi', 'pending')->get();
 
         // Mengembalikan view 'staff.dashboard' dengan data yang telah diambil
         return view('staff.dashboard', [

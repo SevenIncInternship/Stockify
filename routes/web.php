@@ -207,6 +207,16 @@ Route::middleware(['auth'])->group(function () {
                 'destroy' => 'barang_keluar.destroy',
             ]);
 
+            Route::resource('/suppliers', SupplierController::class)->names([
+                'index' => 'suppliers.index',
+                'create' => 'suppliers.create',
+                'store' => 'suppliers.store',
+                'show' => 'suppliers.show',
+                'edit' => 'suppliers.edit',
+                'update' => 'suppliers.update',
+                'destroy' => 'suppliers.destroy',
+            ]);
+
             Route::resource('/stock_opname', StockOpnameController::class)->names([
                 'index' => 'stock_opname.index',
                 'create' => 'stock_opname.create',
