@@ -11,6 +11,21 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+
+    public function generateMissingSku()
+{
+    $products = Product::whereNull('sku')->get();
+    $jumlah = 0;
+
+    foreach ($products as $product) {
+        $product->sku = 'SKU-' . strtoupper(Str::random(8));
+        $product->save();
+        $jumlah++;
+    }
+
+    return redirect()->back()->with('success', "$jumlah SKU berhasil digenerate.");
+}
+
     private function checkRole($roles = ['admin'])
     {
         if (!in_array(auth()->user()->role, $roles)) {
@@ -56,6 +71,7 @@ class ProductController extends Controller
         ]);
 
         $path = $request->file('image') ? $request->file('image')->store('products', 'public') : null;
+
         $sku = 'SKU-' . strtoupper(Str::random(8));
 
         Product::create([

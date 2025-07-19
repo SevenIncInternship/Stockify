@@ -5,6 +5,7 @@
 @section('content')
 @php
     $rolePrefix = auth()->user()->role === 'manajer' ? 'manajer' : 'admin';
+    $jumlahProdukKosongSKU = \App\Models\Product::whereNull('sku')->count();
 @endphp
 
 <div class="p-6 max-w-7xl mx-auto">
@@ -24,6 +25,18 @@
     @if (session('success'))
         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow">
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($rolePrefix === 'admin' && $jumlahProdukKosongSKU > 0)
+        <div class="mb-4 flex items-center justify-between bg-yellow-50 border border-yellow-300 text-yellow-800 px-4 py-3 rounded shadow">
+            <div>
+                <strong>{{ $jumlahProdukKosongSKU }}</strong> produk belum memiliki SKU.
+            </div>
+            <a href="{{ route('admin.product.generateSku') }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+                🔁 Generate SKU Kosong
+            </a>
         </div>
     @endif
 
@@ -55,7 +68,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-3">{{ $product->nama }}</td>
-                        <td class="px-6 py-3">{{ $product->SKU }}</td>
+                        <td class="px-6 py-3">{{ $product->SKU ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $product->category?->nama ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $product->supplier?->nama ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $product->stock }}</td>

@@ -3,6 +3,12 @@
 @section('title', 'Tambah Stock Opname')
 
 @section('content')
+@php
+    $role = auth()->user()->role;
+    $routePrefix = $role === 'manajer' ? 'manajer' : 'staff';
+@endphp
+
+
 <div class="max-w-xl mx-auto bg-white shadow p-6 rounded">
     <h1 class="text-xl font-bold mb-4 text-gray-800">Tambah Stock Opname</h1>
 
@@ -16,7 +22,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('manajer.stock_opname.store') }}">
+     <form method="POST" action="{{ route($rolePrefix . '.stock_opname.store') }}" class="space-y-5">
         @csrf
         <div class="mb-4">
             <label for="product_id" class="block text-sm font-medium text-gray-700">Produk</label>

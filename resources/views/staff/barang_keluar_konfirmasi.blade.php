@@ -40,7 +40,7 @@
     <p><strong>Nama Barang:</strong> {{ $item->nama_barang }}</p>
     <p><strong>Jumlah:</strong> {{ $item->jumlah }}</p>
     <p><strong>Satuan:</strong> {{ $item->satuan }}</p>
-    <p><strong>Status:</strong> {{ $item->status }}</p>
+    <p><strong>Status:</strong> {{ $item->status_konfirmasi }}</p>
 
     @if($item->status !== 'selesai')
     <form action="{{ route('staff.barangKeluar.konfirmasi', $item->id) }}" method="POST" class="mt-4">

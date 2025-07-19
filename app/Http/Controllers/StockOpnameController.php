@@ -1,22 +1,40 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\StockOpname;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class StockOpnameController extends Controller
 {
+    private function getPrefixByRole()
+    {
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            return 'admin';
+        } elseif ($user->role === 'manajer') {
+            return 'manajer';
+        } elseif ($user->role === 'staff') {
+            return 'staff';
+        } else {
+            abort(403, 'Role tidak diizinkan.');
+        }
+    }
+
     public function index()
     {
-        $data = StockOpname::with('product')->latest()->paginate(10);
-        return view('manajer.stock_opname.index', compact('data'));
+        $stockOpname = StockOpname::with('product')->latest()->paginate(10);
+        return view('stock_opname.index', compact('stockOpname'));
     }
 
     public function create()
     {
         $products = Product::orderBy('nama')->get();
-        return view('manajer.stock_opname.create', compact('products'));
+        $rolePrefix = $this->getPrefixByRole();
+
+        return view('stock_opname.create', compact('products', 'rolePrefix'));
     }
 
     public function store(Request $request)
@@ -35,20 +53,34 @@ class StockOpnameController extends Controller
             'stok_fisik' => $request->stok_fisik,
             'stok_sistem' => $stokSistem,
             'keterangan' => $request->keterangan,
+            'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('manajer.stock_opname.index')
+        $prefix = $this->getPrefixByRole();
+
+        return redirect()->route("{$prefix}.stock_opname.index")
             ->with('success', 'Stock opname berhasil dicatat.');
     }
 
-    public function show(StockOpname $stockOpname)
+    public function show($id)
     {
-        return view('manajer.stock_opname.show', compact('stockOpname'));
+        $stockOpname = StockOpname::with('product')->findOrFail($id);
+        return view('stock_opname.show', compact('stockOpname'));
     }
 
-    public function destroy(StockOpname $stockOpname)
+    public function destroy($id)
     {
+        $stockOpname = StockOpname::findOrFail($id);
+
+        if (auth()->user()->role !== 'manajer') {
+            abort(403, 'Hanya manajer yang boleh menghapus data stock opname.');
+        }
+
         $stockOpname->delete();
-        return back()->with('success', 'Data stock opname dihapus.');
+
+        $prefix = $this->getPrefixByRole();
+
+        return redirect()->route("{$prefix}.stock_opname.index")
+            ->with('success', 'Data stock opname berhasil dihapus.');
     }
 }

@@ -61,5 +61,13 @@
             @endforeach
         </ul>
     </div>
+
+    <div class="bg-white p-4 shadow rounded">
+        <h2 class="text-xl font-bold mb-2">Stock Opname</h2>
+        <a href="{{ route('staff.stock_opname.index') }}" 
+            class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition-all duration-200">
+            Lihat & Catat Stock Opname
+        </a>
+    </div>
 </div>
 @endsection
