@@ -1,8 +1,9 @@
 @php
     $role = auth()->user()->role;
+    $navItems = [];
 
-    $navItems = $role === 'admin'
-        ? [
+    if ($role === 'admin') {
+        $navItems = [
             ['route' => 'admin.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
             ['route' => 'admin.barang_masuk.index', 'icon' => 'fa-arrow-down', 'label' => 'Barang Masuk', 'color' => 'cyan'],
             ['route' => 'admin.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
@@ -10,14 +11,21 @@
             ['route' => 'admin.category.index', 'icon' => 'fa-tags', 'label' => 'Kategori', 'color' => 'yellow'],
             ['route' => 'admin.suppliers.index', 'icon' => 'fa-truck', 'label' => 'Supplier', 'color' => 'purple'],
             ['route' => 'admin.users.index', 'icon' => 'fa-user', 'label' => 'Kelola User', 'color' => 'black'],
-        ]
-        : [
+        ];
+    } elseif ($role === 'manajer') {
+        $navItems = [
             ['route' => 'manajer.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
             ['route' => 'manajer.barang_masuk.index', 'icon' => 'fa-arrow-down', 'label' => 'Barang Masuk', 'color' => 'cyan'],
             ['route' => 'manajer.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
             ['route' => 'manajer.product.index', 'icon' => 'fa-box', 'label' => 'Stok Produk', 'color' => 'green'],
             ['route' => 'manajer.stock_opname.index', 'icon' => 'fa-clipboard-check', 'label' => 'Stok Opname', 'color' => 'yellow'],
         ];
+    } elseif ($role === 'staff') {
+        $navItems = [
+            ['route' => 'staff.dashboard', 'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard', 'color' => 'blue'],
+            ['route' => 'staff.stock_opname.index', 'icon' => 'fa-clipboard-check', 'label' => 'Stock Opname', 'color' => 'yellow'],
+        ];
+    }
 @endphp
 
 <div class="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl min-h-screen relative overflow-hidden">

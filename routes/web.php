@@ -101,6 +101,9 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+            Route::get('/products/generate-sku', [ProductController::class, 'generateMissingSku'])
+            ->name('product.generateSku');
+
             // Resource routes untuk manajemen data master
             Route::resource('/products', ProductController::class)->names([
                 'index' => 'product.index',
@@ -162,6 +165,7 @@ Route::middleware(['auth'])->group(function () {
                 'update' => 'users.update',
                 'destroy' => 'users.destroy',
             ]);
+
 
             // Rute Laporan (khusus Admin)
             Route::get('/laporan/barang_masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
@@ -235,20 +239,25 @@ Route::middleware(['auth'])->group(function () {
     // =========================================================
     // STAFF ROUTES (prefix + middleware role:staff)
     // =========================================================
-    Route::middleware('role:staff')
-        ->prefix('staff')
-        ->name('staff.')
-        ->group(function () {
-            Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
+    Route::middleware(['auth', 'role:staff'])
+    ->prefix('staff')
+    ->name('staff.')
+    ->group(function () {
+        Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
 
-            // Barang Masuk konfirmasi
-            Route::get('/barang_masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'konfirmasi'])->name('barangMasuk.konfirmasi');
-            Route::put('/barang_masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'update'])->name('barangMasuk.update_konfirmasi');
+       // Barang Masuk Konfirmasi
+        Route::get('/barang-masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'konfirmasi'])->name('barangMasuk.konfirmasi');
 
-            // Barang Keluar konfirmasi
-            Route::get('/barang_keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'konfirmasi'])->name('barangKeluar.konfirmasi');
-            Route::put('/barang_keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'update'])->name('barangKeluar.update_konfirmasi');
-        });
+        // Barang Keluar Konfirmasi
+        Route::get('/barang-keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'konfirmasi'])->name('barangKeluar.konfirmasi');
+
+        Route::get('/stock-opname', [StockOpnameController::class, 'index'])->name('stock_opname.index');
+        Route::get('/stock-opname/create', [StockOpnameController::class, 'create'])->name('stock_opname.create');
+        Route::post('/stock-opname', [StockOpnameController::class, 'store'])->name('stock_opname.store');
+        Route::get('/stock-opname/{id}', [StockOpnameController::class, 'show'])->name('stock_opname.show');
+
+    });
+
 
     // Rute tambahan non-role dapat diletakkan di sini, di dalam grup 'auth'
     // Contoh: Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
