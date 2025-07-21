@@ -20,7 +20,7 @@ class StaffBarangKeluarController extends Controller
         $barang = BarangKeluar::findOrFail($id);
 
         // Mengubah status transaksi menjadi 'selesai'
-        $barang->status = 'selesai';
+        $barang->status_konfirmasi = 'diterima';
         $barang->save(); // Menyimpan perubahan ke database
 
         // Mengarahkan kembali ke dashboard staff dengan pesan sukses

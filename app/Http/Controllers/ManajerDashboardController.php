@@ -12,8 +12,12 @@ class ManajerDashboardController extends Controller
 {
     public function index()
     {
-        $barangMasuk = BarangMasuk::whereDate('created_at', today())->count();
-        $barangKeluar = BarangKeluar::whereDate('created_at', today())->count();
+        $barangMasuk = BarangMasuk::whereDate('created_at', today())
+        ->where('status_konfirmasi','diterima')
+        ->count();
+        $barangKeluar = BarangKeluar::whereDate('created_at', today())
+        ->where('status_konfirmasi','diterima')
+        ->count();
         $totalProduk = Product::count();
         $stockOpname = StockOpname::count(); // Jika belum ada, bisa set default null
 
