@@ -8,60 +8,67 @@ use Illuminate\Http\Request;
 
 class BarangKeluarController extends Controller
 {
-
     private function getPrefixByRole()
     {
         $user = auth()->user();
-        return match($user->role) {
+        return match ($user->role) {
             'admin' => 'admin',
             'manajer' => 'manajer',
             default => abort(403, 'Role tidak diizinkan.')
         };
     }
 
+    private function authorizeRole(array $allowedRoles)
+    {
+        $role = auth()->user()->role;
+        if (!in_array($role, $allowedRoles)) {
+            abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
+        }
+    }
+
     public function index()
     {
         $barangKeluar = BarangKeluar::with('product')->latest()->paginate(10);
         $prefix = $this->getPrefixByRole();
+
         return view('barang_keluar.index', compact('barangKeluar'));
     }
 
     public function create(Request $request)
-{
-    $products = Product::all();
+    {
+        $this->authorizeRole(['admin', 'manajer', 'staff']);
+        $products = Product::all();
+        $rolePrefix = $this->getPrefixByRole();
 
-    $rolePrefix = $this->getPrefixByRole();
-
-    return view('barang_keluar.create', compact('products', 'rolePrefix'));
-}
-
+        return view('barang_keluar.create', compact('products', 'rolePrefix'));
+    }
 
     public function store(Request $request)
     {
+        $this->authorizeRole(['admin', 'manajer', 'staff']);
+
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'jumlah'     => 'required|integer|min:1',
-            'satuan'     => 'required|string',
-            'tanggal'    => 'required|date',
+            'jumlah' => 'required|integer|min:1',
+            'satuan' => 'required|string',
+            'tanggal' => 'required|date',
             'status_konfirmasi' => 'nullable|in:pending,diterima,ditolak',
         ]);
 
         $userRole = $request->user()->role;
 
-        // Role-based assignment
+        // Tentukan status_konfirmasi berdasarkan role
         if ($userRole === 'staff') {
             $validated['status_konfirmasi'] = 'pending';
         } elseif ($userRole === 'manajer') {
-            // Manajer hanya bisa pilih pending atau diterima (dipastikan dari blade)
             $validated['status_konfirmasi'] = $validated['status_konfirmasi'] ?? 'pending';
         } elseif ($userRole === 'admin') {
-            // Admin bisa pilih semua status
             $validated['status_konfirmasi'] = $validated['status_konfirmasi'] ?? 'pending';
         }
 
         $product = Product::findOrFail($validated['product_id']);
 
-        // Jika status diterima, cek stok
+        // Jika diterima, kurangi stok
         if ($validated['status_konfirmasi'] === 'diterima') {
             if ($product->stock < $validated['jumlah']) {
                 return back()->withErrors(['jumlah' => 'Stok tidak mencukupi.'])->withInput();
@@ -71,17 +78,14 @@ class BarangKeluarController extends Controller
         }
 
         BarangKeluar::create($validated);
-        
-        $prefix = $this->getPrefixByRole();
-        return redirect()->route("{$prefix}.barang_keluar.index")->with('success', 'Barang masuk berhasil ditambahkan.');
 
+        $prefix = $this->getPrefixByRole();
+        return redirect()->route("{$prefix}.barang_keluar.index")->with('success', 'Barang keluar berhasil ditambahkan.');
     }
 
     public function edit(Request $request, BarangKeluar $barangKeluar)
     {
-        if ($request->user()->role === 'staff') {
-            return back()->withErrors(['error' => 'Anda tidak memiliki izin untuk mengedit.']);
-        }
+        $this->authorizeRole(['admin', 'manajer']);
 
         if ($barangKeluar->status_konfirmasi !== 'pending') {
             return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diedit.']);
@@ -93,9 +97,7 @@ class BarangKeluarController extends Controller
 
     public function update(Request $request, BarangKeluar $barangKeluar)
     {
-        if ($request->user()->role === 'staff') {
-            return back()->withErrors(['error' => 'Anda tidak memiliki izin untuk memperbarui data ini.']);
-        }
+        $this->authorizeRole(['admin', 'manajer']);
 
         if ($barangKeluar->status_konfirmasi !== 'pending') {
             return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diperbarui.']);
@@ -103,9 +105,9 @@ class BarangKeluarController extends Controller
 
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'jumlah'     => 'required|integer|min:1',
-            'satuan'     => 'required|string',
-            'tanggal'    => 'required|date',
+            'jumlah' => 'required|integer|min:1',
+            'satuan' => 'required|string',
+            'tanggal' => 'required|date',
             'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
         ]);
 
@@ -121,15 +123,14 @@ class BarangKeluarController extends Controller
 
         $barangKeluar->update($validated);
 
-        return redirect()->route('admin.barang_keluar.index')
+        $prefix = $this->getPrefixByRole();
+        return redirect()->route("{$prefix}.barang_keluar.index")
             ->with('success', 'Transaksi barang keluar berhasil diperbarui.');
     }
 
     public function destroy(Request $request, BarangKeluar $barangKeluar)
     {
-        if ($request->user()->role === 'staff') {
-            return back()->withErrors(['error' => 'Anda tidak memiliki izin untuk menghapus data ini.']);
-        }
+        $this->authorizeRole(['admin', 'manajer']);
 
         if ($barangKeluar->status_konfirmasi === 'diterima') {
             $product = $barangKeluar->product;
@@ -141,7 +142,8 @@ class BarangKeluarController extends Controller
 
         $barangKeluar->delete();
 
-        return redirect()->route('admin.barang_keluar.index')
+        $prefix = $this->getPrefixByRole();
+        return redirect()->route("{$prefix}.barang_keluar.index")
             ->with('success', 'Data barang keluar berhasil dihapus.');
     }
 }
