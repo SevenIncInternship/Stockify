@@ -11,21 +11,6 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-
-    public function generateMissingSku()
-{
-    $products = Product::whereNull('sku')->get();
-    $jumlah = 0;
-
-    foreach ($products as $product) {
-        $product->sku = 'SKU-' . strtoupper(Str::random(8));
-        $product->save();
-        $jumlah++;
-    }
-
-    return redirect()->back()->with('success', "$jumlah SKU berhasil digenerate.");
-}
-
     private function checkRole($roles = ['admin'])
     {
         if (!in_array(auth()->user()->role, $roles)) {
@@ -52,6 +37,7 @@ class ProductController extends Controller
 
         $categories = Category::all();
         $suppliers = Supplier::all();
+
         return view('product.create', compact('categories', 'suppliers'));
     }
 
@@ -79,10 +65,10 @@ class ProductController extends Controller
             'SKU'           => $sku,
             'kategori_id'   => $request->kategori_id,
             'supplier_id'   => $request->supplier_id,
-            'stock'         => 0,
+            'stock'         => 0, // pastikan stock tidak null
             'satuan'        => $request->satuan,
-            'harga_beli'    => $request->harga_beli,
-            'harga_jual'    => $request->harga_jual,
+            'harga_beli'    => $request->harga_beli ?? 0,
+            'harga_jual'    => $request->harga_jual ?? 0,
             'minimal_stok'  => $request->minimal_stok ?? 0,
             'image'         => $path,
         ]);
@@ -148,5 +134,19 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route($this->rolePrefix() . '.product.index')->with('success', 'Produk berhasil dihapus');
+    }
+
+    public function generateMissingSku()
+    {
+        $products = Product::whereNull('sku')->get();
+        $jumlah = 0;
+
+        foreach ($products as $product) {
+            $product->sku = 'SKU-' . strtoupper(Str::random(8));
+            $product->save();
+            $jumlah++;
+        }
+
+        return redirect()->back()->with('success', "$jumlah SKU berhasil digenerate.");
     }
 }

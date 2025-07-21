@@ -96,37 +96,51 @@ class BarangKeluarController extends Controller
     }
 
     public function update(Request $request, BarangKeluar $barangKeluar)
-    {
-        $this->authorizeRole(['admin', 'manajer']);
+{
+    $this->authorizeRole(['admin', 'manajer']);
 
-        if ($barangKeluar->status_konfirmasi !== 'pending') {
-            return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diperbarui.']);
-        }
+    if ($barangKeluar->status_konfirmasi !== 'pending') {
+        return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diperbarui.']);
+    }
 
-        $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'jumlah' => 'required|integer|min:1',
-            'satuan' => 'required|string',
-            'tanggal' => 'required|date',
-            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
-        ]);
+    $validated = $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'jumlah' => 'required|integer|min:1',
+        'satuan' => 'required|string',
+        'tanggal' => 'required|date',
+        'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+    ]);
 
-        $product = Product::findOrFail($validated['product_id']);
+    // Ambil produk yang sebelumnya dan yang baru
+    $produkLama = $barangKeluar->product;
+    $produkBaru = Product::findOrFail($validated['product_id']);
 
-        if ($validated['status_konfirmasi'] === 'diterima') {
-            if ($product->stock < $validated['jumlah']) {
+    // Jika status konfirmasi menjadi 'diterima', cek dan atur stok
+    if ($validated['status_konfirmasi'] === 'diterima') {
+        // Jika produk diganti atau jumlah berubah
+        if ($barangKeluar->product_id != $produkBaru->id || $barangKeluar->jumlah != $validated['jumlah']) {
+            // Kembalikan stok lama jika produk tidak sama
+            if ($produkLama && $barangKeluar->product_id != $produkBaru->id) {
+                $produkLama->stock += $barangKeluar->jumlah;
+                $produkLama->save();
+            }
+
+            // Kurangi stok baru
+            if ($produkBaru->stock < $validated['jumlah']) {
                 return back()->withErrors(['jumlah' => 'Stok tidak mencukupi.'])->withInput();
             }
-            $product->stock -= $validated['jumlah'];
-            $product->save();
+            $produkBaru->stock -= $validated['jumlah'];
+            $produkBaru->save();
         }
-
-        $barangKeluar->update($validated);
-
-        $prefix = $this->getPrefixByRole();
-        return redirect()->route("{$prefix}.barang_keluar.index")
-            ->with('success', 'Transaksi barang keluar berhasil diperbarui.');
     }
+
+    $barangKeluar->update($validated);
+
+    $prefix = $this->getPrefixByRole();
+    return redirect()->route("{$prefix}.barang_keluar.index")
+        ->with('success', 'Transaksi barang keluar berhasil diperbarui.');
+}
+
 
     public function destroy(Request $request, BarangKeluar $barangKeluar)
     {

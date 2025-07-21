@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\BarangMasuk;
+use App\Models\BarangKeluar;
+use App\Observers\BarangMasukObserver;
+use App\Observers\BarangKeluarObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade; // Impor facade Blade
 

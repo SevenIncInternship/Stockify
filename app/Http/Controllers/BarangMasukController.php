@@ -43,71 +43,82 @@ class BarangMasukController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'jumlah' => 'required|integer|min:1',
-            'satuan' => 'required|string|in:kg,pcs,Lt',
-            'tanggal' => 'required|date',
-            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
-            'product_id' => 'nullable|exists:products,id|required_without:produk_baru',
-            'produk_baru' => 'nullable|string|max:255|required_without:product_id',
-            'kategori_id' => 'nullable|exists:categories,id',
-            'kategori_baru' => 'nullable|string|max:255',
-            'supplier_id' => 'nullable|exists:suppliers,id|required_without:supplier_baru',
-            'supplier_baru' => 'nullable|string|max:255|required_without:supplier_id',
-        ]);
+{
+    $request->validate([
+        'jumlah' => 'required|integer|min:1',
+        'satuan' => 'required|string|in:kg,pcs,Lt',
+        'tanggal' => 'required|date',
+        'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+        'product_id' => 'nullable|exists:products,id|required_without:produk_baru',
+        'produk_baru' => 'nullable|string|max:255|required_without:product_id',
+        'kategori_id' => 'nullable|exists:categories,id',
+        'kategori_baru' => 'nullable|string|max:255',
+        'supplier_id' => 'nullable|exists:suppliers,id|required_without:supplier_baru',
+        'supplier_baru' => 'nullable|string|max:255|required_without:supplier_id',
+    ]);
 
-        $supplierId = $request->supplier_id;
-        if ($request->filled('supplier_baru')) {
-            $supplier = Supplier::firstOrCreate(
-                ['nama' => trim($request->supplier_baru)],
-                ['alamat' => '-', 'telepon' => '-']
-            );
-            $supplierId = $supplier->id;
-        }
-
-        $kategoriId = $request->kategori_id;
-        if ($request->filled('kategori_baru')) {
-            $kategori = Category::firstOrCreate(['nama' => trim($request->kategori_baru)]);
-            $kategoriId = $kategori->id;
-        }
-
-        $productId = $request->product_id;
-        if ($request->filled('produk_baru')) {
-            $produk = Product::create([
-                'nama' => trim($request->produk_baru),
-                'kategori_id' => $kategoriId,
-                'supplier_id' => $supplierId,
-                'stock' => 0,
-                'satuan' => $request->satuan,
-                'SKU' => $this->generateSKU(),
-            ]);
-            $productId = $produk->id;
-        } else {
-            $produk = Product::findOrFail($productId);
-            if (!$produk->supplier_id && $supplierId) {
-                $produk->supplier_id = $supplierId;
-                if (empty($produk->SKU)) {
-                    $produk->SKU = $this->generateSKU();
-                }
-                $produk->save();
-            }
-        }
-
-        $barangMasuk = BarangMasuk::create([
-            'product_id' => $productId,
-            'supplier_id' => $supplierId,
-            'jumlah' => $request->jumlah,
-            'satuan' => $request->satuan,
-            'tanggal' => $request->tanggal,
-            'status_konfirmasi' => $request->status_konfirmasi,
-        ]);
-
-        $produk->increment('stock', $barangMasuk->jumlah);
-
-        $prefix = $this->getPrefixByRole();
-        return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil ditambahkan.');
+    // Supplier
+    $supplierId = $request->supplier_id;
+    if ($request->filled('supplier_baru')) {
+        $supplier = Supplier::firstOrCreate(
+            ['nama' => trim($request->supplier_baru)],
+            ['alamat' => '-', 'telepon' => '-']
+        );
+        $supplierId = $supplier->id;
     }
+
+    // Kategori
+    $kategoriId = $request->kategori_id;
+    if ($request->filled('kategori_baru')) {
+        $kategori = Category::firstOrCreate(['nama' => trim($request->kategori_baru)]);
+        $kategoriId = $kategori->id;
+    }
+
+    // Produk
+    $productId = $request->product_id;
+    if ($request->filled('produk_baru')) {
+        $produk = Product::create([
+            'nama' => trim($request->produk_baru),
+            'kategori_id' => $kategoriId,
+            'supplier_id' => $supplierId,
+            'stock' => 0,
+            'satuan' => $request->satuan,
+            'SKU' => $this->generateSKU(),
+        ]);
+        $productId = $produk->id;
+    } else {
+        $produk = Product::findOrFail($productId);
+        if (!$produk->supplier_id && $supplierId) {
+            $produk->supplier_id = $supplierId;
+            if (empty($produk->SKU)) {
+                $produk->SKU = $this->generateSKU();
+            }
+            $produk->save();
+        }
+    }
+
+    // Simpan barang masuk
+    $barangMasuk = BarangMasuk::create([
+        'product_id' => $productId,
+        'supplier_id' => $supplierId,
+        'jumlah' => $request->jumlah,
+        'satuan' => $request->satuan,
+        'tanggal' => $request->tanggal,
+        'status_konfirmasi' => strtolower($request->status_konfirmasi),
+    ]);
+
+    // Tambah stok jika diterima
+    if ($barangMasuk->status_konfirmasi === 'diterima') {
+        $produk = Product::find($barangMasuk->product_id);
+        if ($produk) {
+            $produk->increment('stock', $barangMasuk->jumlah);
+        }
+    }
+
+    $prefix = $this->getPrefixByRole();
+    return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil ditambahkan.');
+}
+
 
     public function edit($id)
     {
@@ -121,29 +132,49 @@ class BarangMasukController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'supplier_id' => 'required|exists:suppliers,id',
-            'jumlah' => 'required|integer|min:1',
-            'satuan' => 'required|string|in:kg,pcs,Lt',
-            'tanggal' => 'required|date',
-            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
-        ]);
+{
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'supplier_id' => 'required|exists:suppliers,id',
+        'jumlah' => 'required|integer|min:1',
+        'satuan' => 'required|string|in:kg,pcs,Lt',
+        'tanggal' => 'required|date',
+        'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+    ]);
 
-        $barangMasuk = BarangMasuk::findOrFail($id);
-        $barangMasuk->update([
-            'product_id' => $request->product_id,
-            'supplier_id' => $request->supplier_id,
-            'jumlah' => $request->jumlah,
-            'satuan' => $request->satuan,
-            'tanggal' => $request->tanggal,
-            'status_konfirmasi' => $request->status_konfirmasi,
-        ]);
+    $barangMasuk = BarangMasuk::findOrFail($id);
 
-        $prefix = $this->getPrefixByRole();
-        return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil diperbarui.');
+    $statusLama = strtolower($barangMasuk->status_konfirmasi);
+    $statusBaru = strtolower($request->status_konfirmasi);
+    $jumlahLama = $barangMasuk->jumlah;
+    $jumlahBaru = $request->jumlah;
+
+    $produk = Product::findOrFail($request->product_id);
+
+    // Pengaturan stok
+    if ($statusLama === 'diterima' && $statusBaru !== 'diterima') {
+        $produk->decrement('stock', $jumlahLama);
+    } elseif ($statusLama !== 'diterima' && $statusBaru === 'diterima') {
+        $produk->increment('stock', $jumlahBaru);
+    } elseif ($statusLama === 'diterima' && $statusBaru === 'diterima' && $jumlahLama !== $jumlahBaru) {
+        $selisih = $jumlahBaru - $jumlahLama;
+        $produk->increment('stock', $selisih); // bisa + atau -
     }
+
+    // Update data barang masuk
+    $barangMasuk->update([
+        'product_id' => $request->product_id,
+        'supplier_id' => $request->supplier_id,
+        'jumlah' => $jumlahBaru,
+        'satuan' => $request->satuan,
+        'tanggal' => $request->tanggal,
+        'status_konfirmasi' => $statusBaru,
+    ]);
+
+    $prefix = $this->getPrefixByRole();
+    return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil diperbarui.');
+}
+
 
     public function destroy(BarangMasuk $barangMasuk)
     {
