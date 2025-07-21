@@ -142,7 +142,7 @@ class BarangMasukController extends Controller
         ]);
 
         $prefix = $this->getPrefixByRole();
-        return redirect()->route("barang_masuk.index")->with('success', 'Barang masuk berhasil diperbarui.');
+        return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil diperbarui.');
     }
 
     public function destroy(BarangMasuk $barangMasuk)
