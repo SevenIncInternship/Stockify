@@ -8,7 +8,7 @@
     $jumlahProdukKosongSKU = \App\Models\Product::whereNull('sku')->count();
 @endphp
 
-<div class="p-6 max-w-7xl mx-auto">
+<div class="container mx-auto p-6   ">
     <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Daftar Produk - {{ ucfirst($rolePrefix) }}</h1>
@@ -41,7 +41,7 @@
     @endif
 
     <div class="overflow-x-auto bg-white rounded shadow">
-        <table class="min-w-full table-auto text-sm">
+        <table class="min-w-full table-auto text-xs">
             <thead class="bg-gray-50 text-gray-700 font-semibold">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gambar</th>

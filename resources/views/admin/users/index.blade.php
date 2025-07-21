@@ -3,7 +3,7 @@
 @section('title', 'Kelola Pengguna')
 
 @section('content')
-<div class="p-6 bg-white rounded-lg shadow-md">
+<div class="container mx-auto p-6">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Daftar Pengguna</h2>
 
     @if (session('success'))
