@@ -34,10 +34,10 @@
                     <li class="flex items-center justify-between bg-red-50 p-3 rounded">
                         <div class="text-red-800">
                             <span class="font-medium"> 
-                            @if ($bm->product)
-                                Barang Keluar: {{ $bm->product->nama }} ({{ $bm->jumlah }} {{ $bm->satuan }})
+                            @if ($bk->product)
+                                Barang Keluar: {{ $bk->product->nama }} ({{ $bk->jumlah }} {{ $bk->satuan }})
                             @else
-                                Barang Keluar: [Produk tidak ditemukan] ({{ $bm->jumlah }} {{ $bm->satuan }})
+                                Barang Keluar: [Produk tidak ditemukan] ({{ $bk->jumlah }} {{ $bk->satuan }})
                             @endif
                             </span>
                         </div>
