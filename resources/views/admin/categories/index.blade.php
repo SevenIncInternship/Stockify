@@ -3,7 +3,7 @@
 @section('title', 'Kategori Produk')
 
 @section('content')
-<div class="p-6 max-w-7xl mx-auto">
+<div class="container mx-auto p-6">
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-2xl font-bold text-gray-800">Kategori Produk</h1>
         <a href="{{ route('admin.category.create') }}"
@@ -18,14 +18,14 @@
         </div>
     @endif
 
-    <div class="overflow-x-auto bg-white shadow rounded-lg">
-        <table class="min-w-full text-sm text-left border">
-            <thead class="bg-gray-100 text-gray-700 font-semibold">
+    <div class="overflow-x-auto bg-white rounded shadow">
+        <table class="min-w-full table-auto">
+            <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 border-b w-16">#</th>
-                    <th class="px-4 py-3 border-b">Nama Kategori</th>
-                    <th class="px-4 py-3 border-b">Deskripsi</th>
-                    <th class="px-4 py-3 border-b text-center">Aksi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Kategori</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody class="text-gray-800">

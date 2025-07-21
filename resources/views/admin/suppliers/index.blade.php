@@ -18,15 +18,15 @@
         </div>
     @endif
 
-    <div class="overflow-x-auto bg-white shadow rounded-lg">
-        <table class="min-w-full table-auto border text-sm text-left">
-            <thead class="bg-gray-100 text-gray-700 font-semibold">
+    <div class="overflow-x-auto bg-white shadow rounded">
+        <table class="min-w-full table-auto">
+            <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 border-b">#</th>
-                    <th class="px-4 py-3 border-b">Nama Supplier</th>
-                    <th class="px-4 py-3 border-b">Alamat</th>
-                    <th class="px-4 py-3 border-b">Telepon</th>
-                    <th class="px-4 py-3 border-b text-center">Aksi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Supplier</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telepon</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody class="text-gray-800">

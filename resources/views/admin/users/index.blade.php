@@ -4,30 +4,30 @@
 
 @section('content')
 <div class="p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-4">Daftar Pengguna</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Daftar Pengguna</h2>
 
     @if (session('success'))
         <div class="p-3 bg-green-100 text-green-700 rounded mb-4">
             {{ session('success') }}
         </div>
     @endif
-
-    <table class="min-w-full text-sm text-left">
-        <thead>
+    <div class="overflow-x-auto bg-white rounded shadow">
+        <table class="min-w-full text-xs table-auto">
+        <thead class="bg-gray-50">
             <tr class="border-b">
-                <th class="py-2">Nama</th>
-                <th class="py-2">Email</th>
-                <th class="py-2">Role</th>
-                <th class="py-2">Aksi</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Nama</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Role</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($users as $user)
             <tr class="border-b">
-                <td class="py-2">{{ $user->name }}</td>
-                <td class="py-2">{{ $user->email }}</td>
-                <td class="py-2">{{ $user->role }}</td>
-                <td class="py-2">
+                <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $user->role }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
                     <form method="POST" action="{{ route('admin.users.update', $user->id) }}" class="flex items-center gap-2">
                         @csrf
                         @method('PUT') <!-- penting untuk spoof PUT method -->
@@ -43,5 +43,6 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection
