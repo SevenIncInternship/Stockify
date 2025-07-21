@@ -8,9 +8,21 @@ use Illuminate\Http\Request;
 
 class BarangKeluarController extends Controller
 {
+
+    private function getPrefixByRole()
+    {
+        $user = auth()->user();
+        return match($user->role) {
+            'admin' => 'admin',
+            'manajer' => 'manajer',
+            default => abort(403, 'Role tidak diizinkan.')
+        };
+    }
+
     public function index()
     {
         $barangKeluar = BarangKeluar::with('product')->latest()->paginate(10);
+        $prefix = $this->getPrefixByRole();
         return view('barang_keluar.index', compact('barangKeluar'));
     }
 
@@ -18,13 +30,7 @@ class BarangKeluarController extends Controller
 {
     $products = Product::all();
 
-    $userRole = $request->user()->role;
-    $rolePrefix = match ($userRole) {
-        'admin' => 'admin',
-        'manajer' => 'manajer',
-        'staff' => 'staff',
-        default => 'guest', // fallback jika tidak cocok
-    };
+    $rolePrefix = $this->getPrefixByRole();
 
     return view('barang_keluar.create', compact('products', 'rolePrefix'));
 }
@@ -65,9 +71,10 @@ class BarangKeluarController extends Controller
         }
 
         BarangKeluar::create($validated);
+        
+        $prefix = $this->getPrefixByRole();
+        return redirect()->route("{$prefix}.barang_keluar.index")->with('success', 'Barang masuk berhasil ditambahkan.');
 
-        return redirect()->route('admin.barang_keluar.index')
-            ->with('success', 'Barang keluar berhasil ditambahkan.');
     }
 
     public function edit(Request $request, BarangKeluar $barangKeluar)
