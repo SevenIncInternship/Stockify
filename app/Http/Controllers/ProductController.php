@@ -65,7 +65,7 @@ class ProductController extends Controller
             'SKU'           => $sku,
             'kategori_id'   => $request->kategori_id,
             'supplier_id'   => $request->supplier_id,
-            'stock'         => 0, // pastikan stock tidak null
+            'stock'         => 0, 
             'satuan'        => $request->satuan,
             'harga_beli'    => $request->harga_beli ?? 0,
             'harga_jual'    => $request->harga_jual ?? 0,

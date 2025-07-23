@@ -57,7 +57,6 @@ class BarangKeluarController extends Controller
 
         $userRole = $request->user()->role;
 
-        // Tentukan status_konfirmasi berdasarkan role
         if ($userRole === 'staff') {
             $validated['status_konfirmasi'] = 'pending';
         } elseif ($userRole === 'manajer') {
@@ -115,7 +114,7 @@ class BarangKeluarController extends Controller
     $produkLama = $barangKeluar->product;
     $produkBaru = Product::findOrFail($validated['product_id']);
 
-    // Jika status konfirmasi menjadi 'diterima', cek dan atur stok
+    // Jika status konfirmasi menjadi 'diterima'
     if ($validated['status_konfirmasi'] === 'diterima') {
         // Jika produk diganti atau jumlah berubah
         if ($barangKeluar->product_id != $produkBaru->id || $barangKeluar->jumlah != $validated['jumlah']) {

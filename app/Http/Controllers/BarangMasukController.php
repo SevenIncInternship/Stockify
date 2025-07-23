@@ -158,7 +158,7 @@ class BarangMasukController extends Controller
         $produk->increment('stock', $jumlahBaru);
     } elseif ($statusLama === 'diterima' && $statusBaru === 'diterima' && $jumlahLama !== $jumlahBaru) {
         $selisih = $jumlahBaru - $jumlahLama;
-        $produk->increment('stock', $selisih); // bisa + atau -
+        $produk->increment('stock', $selisih); 
     }
 
     // Update data barang masuk

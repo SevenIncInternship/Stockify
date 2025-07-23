@@ -35,7 +35,7 @@ class StaffBarangMasukController extends Controller
             'status_konfirmasi' => $request->status_konfirmasi,
         ]);
 
-        // Jika status sebelumnya bukan 'diterima' dan sekarang 'diterima', tambahkan stok
+        
         if ($statusLama !== 'diterima' && $request->status_konfirmasi === 'diterima') {
             $produk = Product::find($barangMasuk->product_id);
             if ($produk) {

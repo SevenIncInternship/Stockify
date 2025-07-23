@@ -23,7 +23,7 @@ class StaffDashboardController extends Controller
         // Mengambil semua transaksi barang keluar yang berstatus 'pending'
         $barangKeluarPending = BarangKeluar::with('product')->where('status_konfirmasi', 'pending')->get();
 
-        // Mengembalikan view 'staff.dashboard' dengan data yang telah diambil
+        
         return view('staff.dashboard', [
             'barangMasukPending' => $barangMasukPending,
             'barangKeluarPending' => $barangKeluarPending,
