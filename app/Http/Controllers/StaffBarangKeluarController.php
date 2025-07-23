@@ -3,27 +3,46 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\BarangKeluar; // Pastikan model BarangKeluar diimpor dengan benar
+use App\Models\BarangKeluar;
+use App\Models\Product;
 
 class StaffBarangKeluarController extends Controller
 {
     /**
-     * Mengkonfirmasi transaksi barang keluar.
-     * Mengubah status barang keluar menjadi 'selesai' setelah dikonfirmasi.
-     *
-     * @param  int  $id ID transaksi BarangKeluar yang akan dikonfirmasi.
-     * @return \Illuminate\Http\RedirectResponse
+     * Menampilkan semua data barang keluar yang masih pending untuk dikonfirmasi staff.
      */
-    public function konfirmasi($id)
+    public function index()
     {
-        // Mencari transaksi BarangKeluar berdasarkan ID atau menghentikan eksekusi jika tidak ditemukan
-        $barang = BarangKeluar::findOrFail($id);
+        $barangKeluarPending = BarangKeluar::with('product')->where('status_konfirmasi', 'pending')->get();
+        return view('staff.barang_keluar.index', compact('barangKeluarPending'));
+    }
 
-        // Mengubah status transaksi menjadi 'selesai'
-        $barang->status_konfirmasi = 'diterima';
-        $barang->save(); // Menyimpan perubahan ke database
+    /**
+     * Update status konfirmasi barang keluar oleh staff.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+        ]);
 
-        // Mengarahkan kembali ke dashboard staff dengan pesan sukses
-        return redirect()->route('staff.dashboard')->with('success', 'Barang keluar berhasil dikonfirmasi.');
+        $barangKeluar = BarangKeluar::findOrFail($id);
+        $statusLama = $barangKeluar->status_konfirmasi;
+        $jumlah = $barangKeluar->jumlah;
+
+        // Perbarui status
+        $barangKeluar->update([
+            'status_konfirmasi' => $request->status_konfirmasi,
+        ]);
+
+        // Jika status sebelumnya bukan 'diterima' dan sekarang 'diterima', kurangi stok
+        if ($statusLama !== 'diterima' && $request->status_konfirmasi === 'diterima') {
+            $produk = Product::find($barangKeluar->product_id);
+            if ($produk) {
+                $produk->decrement('stock', $jumlah);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Status barang keluar berhasil diperbarui.');
     }
 }

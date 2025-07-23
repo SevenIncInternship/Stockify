@@ -175,7 +175,6 @@ class BarangMasukController extends Controller
     return redirect()->route("{$prefix}.barang_masuk.index")->with('success', 'Barang masuk berhasil diperbarui.');
 }
 
-
     public function destroy(BarangMasuk $barangMasuk)
     {
         $barangMasuk->delete();
