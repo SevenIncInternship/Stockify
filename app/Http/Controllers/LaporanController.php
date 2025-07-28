@@ -8,17 +8,27 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
-        public function index()
-        {
-            $data = BarangMasuk::with(['product', 'supplier'])->latest()->get();
-            return view('admin.laporan.index', compact('data'));
-        }
+    private function getPrefixByRole()
+    {
+        $user = auth()->user();
+        return match($user->role) {
+            'manajer' => 'manajer',
+            default => 'admin',
+        };
+    }
 
-        public function barangMasukPDF()
-        {
-            $data = BarangMasuk::with(['product', 'supplier'])->latest()->get(); // FIX: pakai 'product', bukan 'produk'
-            $pdf = Pdf::loadView('admin.laporan.barang_masuk_pdf', compact('data'));
-            return $pdf->download('laporan_barang_masuk.pdf');
-        }
+    public function index()
+    {
+        $data = BarangMasuk::with(['product', 'supplier'])->latest()->get();
+        $prefix = $this->getPrefixByRole();
+        return view("$prefix.laporan.index", compact('data'));
+    }
 
+    public function barangMasukPDF()
+    {
+        $data = BarangMasuk::with(['product', 'supplier'])->latest()->get();
+        $prefix = $this->getPrefixByRole();
+        $pdf = Pdf::loadView("$prefix.laporan.barang_masuk_pdf", compact('data'));
+        return $pdf->download('laporan_barang_masuk.pdf');
+    }
 }
