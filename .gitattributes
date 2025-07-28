@@ -1,3 +1,26 @@
+# Konversi semua teks file ke LF saat commit
+* text=auto eol=lf
+
+# File khusus Laravel / Web
+*.php     text eol=lf
+*.blade.php text eol=lf
+*.js      text eol=lf
+*.css     text eol=lf
+*.html    text eol=lf
+*.json    text eol=lf
+*.md      text eol=lf
+*.yml     text eol=lf
+*.env     text eol=lf
+
+# Jangan auto-konversi file binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary
 * text=auto eol=lf
 
 *.blade.php diff=html

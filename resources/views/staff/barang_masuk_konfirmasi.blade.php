@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title', 'Konfirmasi Barang Masuk')
 
 @section('content')

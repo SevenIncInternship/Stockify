@@ -11,6 +11,7 @@
             ['route' => 'admin.category.index', 'icon' => 'fa-tags', 'label' => 'Kategori', 'color' => 'yellow'],
             ['route' => 'admin.suppliers.index', 'icon' => 'fa-truck', 'label' => 'Supplier', 'color' => 'purple'],
             ['route' => 'admin.users.index', 'icon' => 'fa-user', 'label' => 'Kelola User', 'color' => 'black'],
+            ['route' => 'admin.laporan.index', 'icon' => 'fa-file-alt', 'label' => 'Laporan Transaksi', 'color' => 'amber'],
         ];
     } elseif ($role === 'manajer') {
         $navItems = [
@@ -19,6 +20,7 @@
             ['route' => 'manajer.barang_keluar.index', 'icon' => 'fa-arrow-up', 'label' => 'Barang Keluar', 'color' => 'red'],
             ['route' => 'manajer.product.index', 'icon' => 'fa-box', 'label' => 'Stok Produk', 'color' => 'green'],
             ['route' => 'manajer.stock_opname.index', 'icon' => 'fa-clipboard-check', 'label' => 'Stok Opname', 'color' => 'yellow'],
+            ['route' => 'manajer.laporan.index', 'icon' => 'fa-file-alt', 'label' => 'Laporan Transaksi', 'color' => 'amber'],
         ];
     } elseif ($role === 'staff') {
         $navItems = [

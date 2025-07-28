@@ -20,6 +20,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\StockOpnameController;
+use App\Http\Controllers\ManajerExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -168,7 +169,9 @@ Route::middleware(['auth'])->group(function () {
 
 
             // Rute Laporan (khusus Admin)
-            Route::get('/laporan/barang_masuk/pdf', [LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
+            // Laporan Transaksi (Admin)
+            Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+            Route::get('/laporan/barang_masuk/pdf', [App\Http\Controllers\LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
             // Tambahkan rute laporan lain di sini jika diperlukan
         });
 
@@ -231,8 +234,13 @@ Route::middleware(['auth'])->group(function () {
                 'destroy' => 'stock_opname.destroy',
             ]);
 
-            Route::get('/dashboard/export/pdf', [\App\Http\Controllers\ManajerExportController::class, 'exportDashboard'])
+            Route::get('/dashboard/export/pdf', [ManajerExportController::class, 'exportDashboard'])
             ->name('dashboard_export_pdf');
+
+            Route::get('/laporan', [ManajerExportController::class, 'index'])
+            ->name('laporan.index');
+
+
 
         });
 
