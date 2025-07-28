@@ -1,37 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>Laporan Barang Masuk</title>
     <style>
-        body { font-family: sans-serif; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 5px; font-size: 12px; text-align: left; }
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .meta {
+            font-size: 11px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        tfoot td {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+
     <h2>Laporan Barang Masuk</h2>
+
+    <div class="meta">
+        Dicetak tanggal: {{ \Carbon\Carbon::now()->format('d-m-Y H:i') }}
+    </div>
+
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>Produk</th>
-                <th>Supplier</th>
+                <th>Tanggal Masuk</th>
+                <th>SKU</th>
+                <th>Nama Produk</th>
                 <th>Jumlah</th>
-                <th>Tanggal</th>
+                <th>Satuan</th>
+                <th>Supplier</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($data as $i => $bm)
+            @forelse($data as $i => $item)
                 <tr>
                     <td>{{ $i + 1 }}</td>
-                    <td>{{ $bm->produk->nama }}</td>
-                    <td>{{ $bm->supplier->nama }}</td>
-                    <td>{{ $bm->jumlah }}</td>
-                    <td>{{ $bm->created_at->format('d/m/Y') }}</td>
+                    <td>{{ $item->tanggal?->format('d-m-Y') ?? '-' }}</td>
+                    <td>{{ $item->product->SKU ?? '-' }}</td>          {{-- CASE FIX --}}
+                    <td>{{ $item->product->nama ?? '-' }}</td>         {{-- CASE FIX --}}
+                    <td>{{ $item->jumlah }}</td>
+                    <td>{{ $item->satuan ?? '-' }}</td>
+                    <td>{{ $item->supplier->nama ?? '-' }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="7" style="text-align:center;">Tidak ada data tersedia.</td>
+                </tr>
+            @endforelse
         </tbody>
+
     </table>
+
 </body>
 </html>
