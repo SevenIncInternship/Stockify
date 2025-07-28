@@ -7,7 +7,8 @@ use App\Models\Product;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use App\Models\StockOpname;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ManajerExportController extends Controller
 {
