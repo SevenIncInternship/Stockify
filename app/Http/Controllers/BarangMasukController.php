@@ -128,11 +128,21 @@ class BarangMasukController extends Controller
         $categories = Category::all();
         $tanggalValue = now()->format('Y-m-d\TH:i');
         $prefix = $this->getPrefixByRole();
+
+        if ($barangMasuk->status_konfirmasi !== 'pending') {
+            return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diedit.']);
+        }
+
         return view("barang_masuk.edit", compact('barangMasuk', 'products', 'suppliers', 'categories', 'tanggalValue'));
     }
 
     public function update(Request $request, $id)
 {
+
+    if ($barangMasuk->status_konfirmasi !== 'pending') {
+            return back()->withErrors(['error' => 'Transaksi sudah dikonfirmasi dan tidak bisa diedit.']);
+    }
+
     $request->validate([
         'product_id' => 'required|exists:products,id',
         'supplier_id' => 'required|exists:suppliers,id',

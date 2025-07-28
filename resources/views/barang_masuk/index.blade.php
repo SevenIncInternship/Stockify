@@ -8,6 +8,20 @@
 
 @section('content')
 <div class="container mx-auto p-6">
+
+    @if (session('success'))
+        <div class="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->has('error'))
+        <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded">
+            {{ $errors->first('error') }}
+        </div>
+    @endif
+
+
     <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Barang Masuk - {{ ucfirst($rolePrefix) }}</h1>
