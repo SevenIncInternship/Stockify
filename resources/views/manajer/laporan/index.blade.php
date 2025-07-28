@@ -10,7 +10,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Laporan Barang Masuk</h1>
             <p class="text-sm text-gray-500">Daftar transaksi barang masuk</p>
         </div>
-        <a href="{{ route('admin.laporan.barangMasuk.pdf') }}"
+        <a href="{{ route('manajer.laporan.barangMasuk.pdf') }}"
            class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow text-sm">
             <i class="fas fa-file-pdf mr-2"></i> Download PDF
         </a>

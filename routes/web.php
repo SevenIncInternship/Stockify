@@ -234,11 +234,8 @@ Route::middleware(['auth'])->group(function () {
                 'destroy' => 'stock_opname.destroy',
             ]);
 
-            Route::get('/dashboard/export/pdf', [ManajerExportController::class, 'exportDashboard'])
-            ->name('dashboard_export_pdf');
-
-            Route::get('/laporan', [ManajerExportController::class, 'index'])
-            ->name('laporan.index');
+            Route::get('/laporan', [App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+            Route::get('/laporan/barang_masuk/pdf', [App\Http\Controllers\LaporanController::class, 'barangMasukPDF'])->name('laporan.barangMasuk.pdf');
 
 
 
