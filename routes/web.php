@@ -253,18 +253,21 @@ Route::middleware(['auth'])->group(function () {
     ->group(function () {
         Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
 
-       // Barang Masuk Konfirmasi
+        // Barang Masuk
         Route::get('/barang-masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'konfirmasi'])->name('barangMasuk.konfirmasi');
+        Route::put('/barang-masuk/{id}/konfirmasi', [StaffBarangMasukController::class, 'update'])->name('barangMasuk.konfirmasi');
 
-        // Barang Keluar Konfirmasi
+        // Barang Keluar
         Route::get('/barang-keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'konfirmasi'])->name('barangKeluar.konfirmasi');
+        Route::put('/barang-keluar/{id}/konfirmasi', [StaffBarangKeluarController::class, 'update'])->name('barangKeluar.konfirmasi');
 
+        // Stock Opname
         Route::get('/stock-opname', [StockOpnameController::class, 'index'])->name('stock_opname.index');
         Route::get('/stock-opname/create', [StockOpnameController::class, 'create'])->name('stock_opname.create');
         Route::post('/stock-opname', [StockOpnameController::class, 'store'])->name('stock_opname.store');
         Route::get('/stock-opname/{id}', [StockOpnameController::class, 'show'])->name('stock_opname.show');
-
     });
+
 
 
     // Rute tambahan non-role dapat diletakkan di sini, di dalam grup 'auth'

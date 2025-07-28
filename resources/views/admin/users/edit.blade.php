@@ -37,8 +37,8 @@
             <select name="role"
                 class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required>
                 <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-                <option value="staff" {{ $user->role === 'manajer' ? 'selected' : '' }}>Mananjer</option>
-                <option value="user"  {{ $user->role === 'staff' ? 'selected' : '' }}>Staff</option>
+                <option value="manajer" {{ $user->role === 'manajer' ? 'selected' : '' }}>Mananjer</option>
+                <option value="staff"  {{ $user->role === 'staff' ? 'selected' : '' }}>Staff</option>
             </select>
         </div>
 

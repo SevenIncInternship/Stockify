@@ -13,7 +13,7 @@
             {{-- Produk --}}
             <div>
                 <label class="block font-medium mb-1">📦 Produk</label>
-                <select name="product_id" class="form-select w-full border-gray-300 rounded-md">
+                <select id="select-produk" name="product_id" class="form-select w-full border-gray-300 rounded-md">
                     <option value="">-- Pilih Produk Lama --</option>
                     @foreach ($products as $product)
                         <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
@@ -23,8 +23,7 @@
                 </select>
 
                 <p class="text-sm text-gray-500 mt-1">Atau isi produk baru di bawah ini:</p>
-
-                <input type="text" name="produk_baru" placeholder="Nama Produk Baru"
+                <input type="text" id="input-produk-baru" name="produk_baru" placeholder="Nama Produk Baru"
                     class="w-full mt-2 border border-gray-300 rounded-md px-3 py-2 text-sm"
                     value="{{ old('produk_baru') }}">
             </div>
@@ -32,7 +31,7 @@
             {{-- Kategori --}}
             <div>
                 <label class="block font-medium mb-1">📁 Kategori</label>
-                <select name="kategori_id" class="form-select w-full border-gray-300 rounded-md">
+                <select id="select-kategori" name="kategori_id" class="form-select w-full border-gray-300 rounded-md">
                     <option value="">-- Pilih Kategori Lama --</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" {{ old('kategori_id') == $category->id ? 'selected' : '' }}>
@@ -41,7 +40,7 @@
                     @endforeach
                 </select>
 
-                <input type="text" name="kategori_baru" placeholder="Kategori Baru (jika perlu)"
+                <input type="text" id="input-kategori-baru" name="kategori_baru" placeholder="Kategori Baru (jika perlu)"
                     class="w-full mt-2 border border-gray-300 rounded-md px-3 py-2 text-sm"
                     value="{{ old('kategori_baru') }}">
             </div>
@@ -49,7 +48,7 @@
             {{-- Supplier --}}
             <div>
                 <label class="block font-medium mb-1">🚚 Supplier</label>
-                <select name="supplier_id" class="form-select w-full border-gray-300 rounded-md">
+                <select id="select-supplier" name="supplier_id" class="form-select w-full border-gray-300 rounded-md">
                     <option value="">-- Pilih Supplier Lama --</option>
                     @foreach ($suppliers as $supplier)
                         <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
@@ -58,7 +57,7 @@
                     @endforeach
                 </select>
 
-                <input type="text" name="supplier_baru" placeholder="Supplier Baru (jika perlu)"
+                <input type="text" id="input-supplier-baru" name="supplier_baru" placeholder="Supplier Baru (jika perlu)"
                     class="w-full mt-2 border border-gray-300 rounded-md px-3 py-2 text-sm"
                     value="{{ old('supplier_baru') }}">
             </div>
@@ -103,11 +102,47 @@
             {{-- Tombol --}}
             <div class="flex justify-end gap-3 pt-4">
                 <a href="{{ route($rolePrefix . '.barang_masuk.index') }}"
-                   class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition">Batal</a>
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition">Batal</a>
                 <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition">Simpan</button>
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition">Simpan</button>
             </div>
         </form>
     </div>
 </div>
+
+{{-- JavaScript untuk toggle input --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const controls = [
+            {
+                select: document.getElementById('select-produk'),
+                input: document.getElementById('input-produk-baru')
+            },
+            {
+                select: document.getElementById('select-kategori'),
+                input: document.getElementById('input-kategori-baru')
+            },
+            {
+                select: document.getElementById('select-supplier'),
+                input: document.getElementById('input-supplier-baru')
+            }
+        ];
+
+        function toggleInput(selectEl, inputEl) {
+            if (selectEl.value) {
+                inputEl.disabled = true;
+                inputEl.classList.add('bg-gray-100', 'cursor-not-allowed');
+                inputEl.value = '';
+            } else {
+                inputEl.disabled = false;
+                inputEl.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            }
+        }
+
+        controls.forEach(({ select, input }) => {
+            toggleInput(select, input);
+            select.addEventListener('change', () => toggleInput(select, input));
+        });
+    });
+</script>
 @endsection

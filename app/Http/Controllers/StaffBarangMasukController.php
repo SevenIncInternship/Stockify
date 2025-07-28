@@ -3,27 +3,46 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\BarangMasuk; // Pastikan model BarangMasuk diimpor dengan benar
+use App\Models\BarangMasuk;
+use App\Models\Product;
 
 class StaffBarangMasukController extends Controller
 {
     /**
-     * Mengkonfirmasi transaksi barang masuk.
-     * Mengubah status barang masuk menjadi 'selesai' setelah dikonfirmasi.
-     *
-     * @param  int  $id ID transaksi BarangMasuk yang akan dikonfirmasi.
-     * @return \Illuminate\Http\RedirectResponse
+     * Menampilkan semua data barang masuk yang masih pending untuk dikonfirmasi staff.
      */
-    public function konfirmasi($id)
+    public function index()
     {
-        // Mencari transaksi BarangMasuk berdasarkan ID atau menghentikan eksekusi jika tidak ditemukan
-        $barang = BarangMasuk::findOrFail($id);
+        $barangMasukPending = BarangMasuk::with('product')->where('status_konfirmasi', 'pending')->get();
+        return view('staff.barang_masuk.index', compact('barangMasukPending'));
+    }
 
-        // Mengubah status transaksi menjadi 'selesai'
-        $barang->status = 'selesai';
-        $barang->save(); // Menyimpan perubahan ke database
+    /**
+     * Update status konfirmasi barang masuk oleh staff.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status_konfirmasi' => 'required|in:pending,diterima,ditolak',
+        ]);
 
-        // Mengarahkan kembali ke dashboard staff dengan pesan sukses
-        return redirect()->route('staff.dashboard')->with('success', 'Barang masuk berhasil dikonfirmasi.');
+        $barangMasuk = BarangMasuk::findOrFail($id);
+        $statusLama = $barangMasuk->status_konfirmasi;
+        $jumlah = $barangMasuk->jumlah;
+
+        // Perbarui status
+        $barangMasuk->update([
+            'status_konfirmasi' => $request->status_konfirmasi,
+        ]);
+
+        
+        if ($statusLama !== 'diterima' && $request->status_konfirmasi === 'diterima') {
+            $produk = Product::find($barangMasuk->product_id);
+            if ($produk) {
+                $produk->increment('stock', $jumlah);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Status barang masuk berhasil diperbarui.');
     }
 }
